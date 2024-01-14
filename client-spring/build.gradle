@@ -1,0 +1,11 @@
+
+dependencies {
+
+    implementation "com.swiftconductor.conductor:conductor-common:${revConductor}"
+
+    api "com.swiftconductor.conductor:conductor-client:${revConductor}"
+    api project(':conductor-java-sdk')
+
+    implementation "com.netflix.eureka:eureka-client:${revEurekaClient}"
+    implementation 'org.springframework.boot:spring-boot-starter'
+}

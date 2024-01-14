@@ -33,9 +33,8 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.swiftconductor.conductor.sdk.healthcheck.HealthCheckClient;
-
 import com.google.common.util.concurrent.Uninterruptibles;
+import com.swiftconductor.conductor.sdk.healthcheck.HealthCheckClient;
 
 public class LocalServerRunner {
 

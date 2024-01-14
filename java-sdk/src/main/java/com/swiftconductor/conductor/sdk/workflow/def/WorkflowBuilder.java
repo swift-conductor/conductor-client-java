@@ -15,6 +15,7 @@ package com.swiftconductor.conductor.sdk.workflow.def;
 
 import java.util.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swiftconductor.conductor.common.metadata.workflow.WorkflowDef;
 import com.swiftconductor.conductor.common.metadata.workflow.WorkflowTask;
 import com.swiftconductor.conductor.sdk.workflow.def.tasks.*;
@@ -22,8 +23,6 @@ import com.swiftconductor.conductor.sdk.workflow.executor.WorkflowExecutor;
 import com.swiftconductor.conductor.sdk.workflow.utils.InputOutputGetter;
 import com.swiftconductor.conductor.sdk.workflow.utils.MapBuilder;
 import com.swiftconductor.conductor.sdk.workflow.utils.ObjectMapperProvider;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @param <T> Input type for the workflow

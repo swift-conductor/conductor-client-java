@@ -23,6 +23,11 @@ import java.util.concurrent.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.jersey.api.client.ClientHandler;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
+import com.sun.jersey.api.client.filter.ClientFilter;
 import com.swiftconductor.conductor.client.http.MetadataClient;
 import com.swiftconductor.conductor.client.http.TaskClient;
 import com.swiftconductor.conductor.client.http.WorkflowClient;
@@ -35,12 +40,6 @@ import com.swiftconductor.conductor.sdk.workflow.def.ConductorWorkflow;
 import com.swiftconductor.conductor.sdk.workflow.def.tasks.*;
 import com.swiftconductor.conductor.sdk.workflow.executor.task.AnnotatedWorkerExecutor;
 import com.swiftconductor.conductor.sdk.workflow.utils.ObjectMapperProvider;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.jersey.api.client.ClientHandler;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
-import com.sun.jersey.api.client.filter.ClientFilter;
 
 public class WorkflowExecutor {
 

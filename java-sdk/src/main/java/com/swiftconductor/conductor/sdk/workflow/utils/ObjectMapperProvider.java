@@ -13,12 +13,11 @@
  */
 package com.swiftconductor.conductor.sdk.workflow.utils;
 
-import com.swiftconductor.conductor.common.jackson.JsonProtoModule;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.swiftconductor.conductor.common.jackson.JsonProtoModule;
 
 public class ObjectMapperProvider {
 

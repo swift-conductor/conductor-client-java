@@ -15,14 +15,13 @@ package com.swiftconductor.conductor.sdk.workflow.def.tasks;
 
 import java.util.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Strings;
 import com.swiftconductor.conductor.common.metadata.tasks.TaskType;
 import com.swiftconductor.conductor.common.metadata.workflow.WorkflowTask;
 import com.swiftconductor.conductor.sdk.workflow.utils.InputOutputGetter;
 import com.swiftconductor.conductor.sdk.workflow.utils.MapBuilder;
 import com.swiftconductor.conductor.sdk.workflow.utils.ObjectMapperProvider;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Strings;
 
 /** Workflow Task */
 public abstract class Task<T> {

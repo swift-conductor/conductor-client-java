@@ -13,10 +13,9 @@
  */
 package com.swiftconductor.conductor.sdk.workflow.def.tasks;
 
+import com.google.common.base.Strings;
 import com.swiftconductor.conductor.common.metadata.tasks.TaskType;
 import com.swiftconductor.conductor.common.metadata.workflow.WorkflowTask;
-
-import com.google.common.base.Strings;
 
 /** Task to publish Events to external queuing systems like SQS, NATS, AMQP etc. */
 public class Event extends Task<Event> {

@@ -19,14 +19,13 @@ import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Strings;
+import com.google.common.reflect.ClassPath;
 import com.swiftconductor.conductor.client.automator.TaskRunnerConfigurer;
 import com.swiftconductor.conductor.client.http.TaskClient;
 import com.swiftconductor.conductor.client.worker.Worker;
 import com.swiftconductor.conductor.sdk.workflow.task.WorkerTask;
-
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Strings;
-import com.google.common.reflect.ClassPath;
 
 public class AnnotatedWorkerExecutor {
 

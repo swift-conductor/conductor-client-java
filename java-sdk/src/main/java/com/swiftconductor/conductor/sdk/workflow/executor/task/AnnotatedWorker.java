@@ -17,6 +17,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swiftconductor.conductor.client.worker.Worker;
 import com.swiftconductor.conductor.common.metadata.tasks.Task;
 import com.swiftconductor.conductor.common.metadata.tasks.TaskResult;
@@ -26,9 +28,6 @@ import com.swiftconductor.conductor.sdk.workflow.def.tasks.DynamicForkInput;
 import com.swiftconductor.conductor.sdk.workflow.task.InputParam;
 import com.swiftconductor.conductor.sdk.workflow.task.OutputParam;
 import com.swiftconductor.conductor.sdk.workflow.utils.ObjectMapperProvider;
-
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class AnnotatedWorker implements Worker {
 

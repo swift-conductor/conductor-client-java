@@ -17,6 +17,7 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.function.Function;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swiftconductor.conductor.client.worker.Worker;
 import com.swiftconductor.conductor.common.metadata.tasks.Task;
 import com.swiftconductor.conductor.common.metadata.tasks.TaskDef;
@@ -25,8 +26,6 @@ import com.swiftconductor.conductor.sdk.workflow.def.tasks.DynamicFork;
 import com.swiftconductor.conductor.sdk.workflow.def.tasks.DynamicForkInput;
 import com.swiftconductor.conductor.sdk.workflow.task.InputParam;
 import com.swiftconductor.conductor.sdk.workflow.utils.ObjectMapperProvider;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DynamicForkWorker implements Worker {
 

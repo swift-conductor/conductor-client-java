@@ -18,7 +18,11 @@ plugins {
 
 rootProject.name = 'conductor-client-java'
 
+include 'client'
+include 'client-spring'
+include 'grpc-client'
 include 'java-sdk'
+include 'test-harness'
 
 rootProject.children.each {it.name="conductor-${it.name}"}
 
