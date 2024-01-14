@@ -1,8 +1,9 @@
-# Workflow SDK
-Workflow SDK provides fluent API to create workflows with strongly typed interfaces.
+# Workflows
 
 ## APIs
+
 ### ConductorWorkflow
+
 [ConductorWorkflow](https://github.com/conductor-client-java/blob/main/java-sdk/src/main/java/com/swiftconductor/conductor/sdk/workflow/def/ConductorWorkflow.java) is the SDK representation of a Conductor workflow.
 
 #### Create a `ConductorWorkflow` Instance

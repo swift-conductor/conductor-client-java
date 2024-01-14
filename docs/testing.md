@@ -1,4 +1,4 @@
-# Unit Testing Framework for Workflows
+# Testing Framework for Workflows
 
 The framework allows you to test the workflow definitions against a specific version of Conductor server.
 

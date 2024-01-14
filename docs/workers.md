@@ -1,4 +1,5 @@
-# Worker SDK
+# Workers
+
 Worker SDK makes it easy to write Conductor workers which are strongly typed with specific inputs and outputs.
 
 Annotations for the worker methods:
@@ -13,6 +14,7 @@ Please note inputs and outputs to a task in Conductor are JSON documents.
 **Examples**
 
 Create a worker named `task1` that gets Task as input and produces TaskResult as output.
+
 ```java
 @WorkerTask("task1")
     public TaskResult task1(Task task) {
@@ -44,6 +46,7 @@ Output:
    "greetings": "Hello, conductor"
 }
 ```
+
 A worker that takes complex java type as input and produces the complex output:
 ```java
 @WorkerTask("get_insurance_quote")
@@ -75,11 +78,14 @@ Output:
 ```
 
 ## Managing Task Workers
+
 Annotated Workers are managed by [WorkflowExecutor](https://github.com/swift-conductor/conductor/blob/main/java-sdk/src/main/java/com/swiftconductor/conductor/sdk/workflow/executor/WorkflowExecutor.java)
 
 ### Start Workers
+
 ```java
 WorkflowExecutor executor = new WorkflowExecutor("http://server/api/");
+
 //List of packages  (comma separated) to scan for annotated workers.  
 // Please note, the worker method MUST be public and the class in which they are defined
 //MUST have a no-args constructor        
@@ -98,7 +104,7 @@ Workers implemented with the annotations are regular Java methods that can be un
 #### Mock Workers for Workflow Testing​
 Create a mock worker in a different package (e.g., test) and scan for these packages when loading up the workers for integration testing.
 
-See [Unit Testing Framework](testing_framework.md) for more details on testing.
+See [Unit Testing Framework](testing.md) for more details on testing.
 
 ## Best Practices
 In a typical production environment, you will have multiple workers across different machines/VMs/pods polling for the same task.
