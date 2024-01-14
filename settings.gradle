@@ -22,7 +22,7 @@ include 'client'
 include 'client-spring'
 include 'grpc-client'
 include 'java-sdk'
-include 'test-harness'
+include 'test-e2e'
 
 rootProject.children.each {it.name="conductor-${it.name}"}
 

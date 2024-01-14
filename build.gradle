@@ -304,7 +304,7 @@ configure(allprojects) {
     }
 }
 
-['test-harness', 'client'].each {
+['test-e2e', 'client'].each {
     configure(project(":conductor-$it")) {
         spotless {
             groovy {
