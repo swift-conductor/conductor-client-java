@@ -41,8 +41,8 @@ public class UserTask extends WorkflowSystemTask {
 
     private final ObjectMapper objectMapper;
 
-    private static final TypeReference<Map<String, Map<String, List<Object>>>>
-            mapStringListObjects = new TypeReference<>() {};
+    private static final TypeReference<Map<String, Map<String, List<Object>>>> mapStringListObjects = new TypeReference<>() {
+    };
 
     @Autowired
     public UserTask(ObjectMapper objectMapper) {
@@ -58,14 +58,12 @@ public class UserTask extends WorkflowSystemTask {
         if (task.getWorkflowTask().isAsyncComplete()) {
             task.setStatus(TaskModel.Status.IN_PROGRESS);
         } else {
-            Map<String, Map<String, List<Object>>> map =
-                    objectMapper.convertValue(task.getInputData(), mapStringListObjects);
+            Map<String, Map<String, List<Object>>> map = objectMapper.convertValue(task.getInputData(),
+                    mapStringListObjects);
             Map<String, Object> output = new HashMap<>();
             Map<String, List<Object>> defaultLargeInput = new HashMap<>();
             defaultLargeInput.put("TEST_SAMPLE", Collections.singletonList("testDefault"));
-            output.put(
-                    "size",
-                    map.getOrDefault("largeInput", defaultLargeInput).get("TEST_SAMPLE").size());
+            output.put("size", map.getOrDefault("largeInput", defaultLargeInput).get("TEST_SAMPLE").size());
             task.setOutputData(output);
             task.setStatus(TaskModel.Status.COMPLETED);
         }

@@ -44,8 +44,7 @@ public class LocalServerRunner {
 
     private Process serverProcess;
 
-    private final ScheduledExecutorService healthCheckExecutor =
-            Executors.newSingleThreadScheduledExecutor();
+    private final ScheduledExecutorService healthCheckExecutor = Executors.newSingleThreadScheduledExecutor();
 
     private final CountDownLatch serverProcessLatch = new CountDownLatch(1);
 
@@ -69,20 +68,22 @@ public class LocalServerRunner {
     }
 
     /**
-     * Starts the local server. Downloads the latest conductor build from the maven repo If you want
-     * to start the server from a specific download location, set `repositoryURL` system property
-     * with the link to the actual downloadable server boot jar file.
+     * Starts the local server. Downloads the latest conductor build from the maven
+     * repo If you want to start the server from a specific download location, set
+     * `repositoryURL` system property with the link to the actual downloadable
+     * server boot jar file.
      *
-     * <p><b>System Properties that can be set</b> conductorVersion: when specified, uses this
-     * version of conductor to run tests (and downloads from maven repo) repositoryURL: full url
-     * where the server boot jar can be downloaded from. This can be a public repo or internal
-     * repository, allowing full control over the location and version of the conductor server
+     * <p>
+     * <b>System Properties that can be set</b> conductorVersion: when specified,
+     * uses this version of conductor to run tests (and downloads from maven repo)
+     * repositoryURL: full url where the server boot jar can be downloaded from.
+     * This can be a public repo or internal repository, allowing full control over
+     * the location and version of the conductor server
      */
     public void startLocalServer() {
         synchronized (serverInstances) {
             if (serverInstances.get(port) != null) {
-                throw new IllegalStateException(
-                        "Another server has already been started at port " + port);
+                throw new IllegalStateException("Another server has already been started at port " + port);
             }
             serverInstances.put(port, this);
         }
@@ -90,24 +91,18 @@ public class LocalServerRunner {
         try {
             Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
             installAndStartServer(port);
-            healthCheckExecutor.scheduleAtFixedRate(
-                    () -> {
-                        try {
-                            if (serverProcessLatch.getCount() > 0) {
-                                boolean isRunning = healthCheck.isServerRunning();
-                                if (isRunning) {
-                                    serverProcessLatch.countDown();
-                                }
-                            }
-                        } catch (Exception e) {
-                            LOGGER.warn(
-                                    "Caught an exception while polling for server running status {}",
-                                    e.getMessage());
+            healthCheckExecutor.scheduleAtFixedRate(() -> {
+                try {
+                    if (serverProcessLatch.getCount() > 0) {
+                        boolean isRunning = healthCheck.isServerRunning();
+                        if (isRunning) {
+                            serverProcessLatch.countDown();
                         }
-                    },
-                    100,
-                    100,
-                    TimeUnit.MILLISECONDS);
+                    }
+                } catch (Exception e) {
+                    LOGGER.warn("Caught an exception while polling for server running status {}", e.getMessage());
+                }
+            }, 100, 100, TimeUnit.MILLISECONDS);
             Uninterruptibles.awaitUninterruptibly(serverProcessLatch, 1, TimeUnit.MINUTES);
 
             if (serverProcessLatch.getCount() > 0) {
@@ -132,21 +127,13 @@ public class LocalServerRunner {
             return;
         }
 
-        String downloadURL =
-                "https://s01.oss.sonatype.org/service/local/artifact/maven/redirect"
-                        + "?r=snapshots&g=com.swiftconductor.conductor"
-                        + "&a=conductor-server"
-                        + "&v="
-                        + conductorVersion
-                        + "&e=jar&c=boot";
+        String downloadURL = "https://s01.oss.sonatype.org/service/local/artifact/maven/redirect"
+                + "?r=snapshots&g=com.swiftconductor.conductor" + "&a=conductor-server" + "&v=" + conductorVersion
+                + "&e=jar&c=boot";
 
-        String repositoryURL =
-                Optional.ofNullable(System.getProperty("repositoryURL")).orElse(downloadURL);
+        String repositoryURL = Optional.ofNullable(System.getProperty("repositoryURL")).orElse(downloadURL);
 
-        LOGGER.info(
-                "Running conductor with version {} from repo url {}",
-                conductorVersion,
-                repositoryURL);
+        LOGGER.info("Running conductor with version {} from repo url {}", conductorVersion, repositoryURL);
 
         String tempDir = System.getProperty("java.io.tmpdir");
         Path serverFile = Paths.get(tempDir, "conductor-server-" + conductorVersion + ".jar");
@@ -158,9 +145,9 @@ public class LocalServerRunner {
         boolean redirect = false;
         int status = conn.getResponseCode();
         if (status != HttpURLConnection.HTTP_OK) {
-            if (status == HttpURLConnection.HTTP_MOVED_TEMP
-                    || status == HttpURLConnection.HTTP_MOVED_PERM
-                    || status == HttpURLConnection.HTTP_SEE_OTHER) redirect = true;
+            if (status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM
+                    || status == HttpURLConnection.HTTP_SEE_OTHER)
+                redirect = true;
         }
 
         // get redirect url from "location" header field
@@ -172,61 +159,50 @@ public class LocalServerRunner {
         conn.disconnect();
 
         LOGGER.info("Downloading: {}", serverFile);
-        Files.copy(
-                new URL(repositoryURL).openStream(),
-                serverFile,
-                StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(new URL(repositoryURL).openStream(), serverFile, StandardCopyOption.REPLACE_EXISTING);
 
-        String configFile =
-                LocalServerRunner.class.getResource("/test-server.properties").getFile();
+        String configFile = LocalServerRunner.class.getResource("/test-server.properties").getFile();
 
-        String command =
-                "java -Dserver.port="
-                        + localServerPort
-                        + " -DCONDUCTOR_CONFIG_FILE="
-                        + configFile
-                        + " -jar "
-                        + serverFile;
+        String command = "java -Dserver.port=" + localServerPort + " -DCONDUCTOR_CONFIG_FILE=" + configFile + " -jar "
+                + serverFile;
         LOGGER.info("Running command {}", command);
 
         serverProcess = Runtime.getRuntime().exec(command);
-        BufferedReader error =
-                new BufferedReader(new InputStreamReader(serverProcess.getErrorStream()));
-        BufferedReader op =
-                new BufferedReader(new InputStreamReader(serverProcess.getInputStream()));
+        BufferedReader error = new BufferedReader(new InputStreamReader(serverProcess.getErrorStream()));
+        BufferedReader op = new BufferedReader(new InputStreamReader(serverProcess.getInputStream()));
 
-        // This captures the stream and copies to a visible log for tracking errors asynchronously
+        // This captures the stream and copies to a visible log for tracking errors
+        // asynchronously
         // using a separate thread
-        Executors.newSingleThreadScheduledExecutor()
-                .execute(
-                        () -> {
-                            String line = null;
-                            while (true) {
-                                try {
-                                    if ((line = error.readLine()) == null) break;
-                                } catch (IOException e) {
-                                    LOGGER.error("Exception reading input stream:", e);
-                                }
-                                // copy to standard error
-                                LOGGER.error("Server error stream - {}", line);
-                            }
-                        });
+        Executors.newSingleThreadScheduledExecutor().execute(() -> {
+            String line = null;
+            while (true) {
+                try {
+                    if ((line = error.readLine()) == null)
+                        break;
+                } catch (IOException e) {
+                    LOGGER.error("Exception reading input stream:", e);
+                }
+                // copy to standard error
+                LOGGER.error("Server error stream - {}", line);
+            }
+        });
 
-        // This captures the stream and copies to a visible log for tracking errors asynchronously
+        // This captures the stream and copies to a visible log for tracking errors
+        // asynchronously
         // using a separate thread
-        Executors.newSingleThreadScheduledExecutor()
-                .execute(
-                        () -> {
-                            String line = null;
-                            while (true) {
-                                try {
-                                    if ((line = op.readLine()) == null) break;
-                                } catch (IOException e) {
-                                    LOGGER.error("Exception reading input stream:", e);
-                                }
-                                // copy to standard out
-                                LOGGER.trace("Server input stream - {}", line);
-                            }
-                        });
+        Executors.newSingleThreadScheduledExecutor().execute(() -> {
+            String line = null;
+            while (true) {
+                try {
+                    if ((line = op.readLine()) == null)
+                        break;
+                } catch (IOException e) {
+                    LOGGER.error("Exception reading input stream:", e);
+                }
+                // copy to standard out
+                LOGGER.trace("Server input stream - {}", line);
+            }
+        });
     }
 }

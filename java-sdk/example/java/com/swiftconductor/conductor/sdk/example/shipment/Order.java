@@ -18,9 +18,7 @@ import java.math.BigDecimal;
 public class Order {
 
     public enum ShippingMethod {
-        GROUND,
-        NEXT_DAY_AIR,
-        SAME_DAY
+        GROUND, NEXT_DAY_AIR, SAME_DAY
     }
 
     private String orderNumber;
@@ -44,7 +42,8 @@ public class Order {
         this.unitPrice = unitPrice;
     }
 
-    public Order() {}
+    public Order() {
+    }
 
     public String getOrderNumber() {
         return orderNumber;

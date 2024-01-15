@@ -36,23 +36,14 @@ public class SubWorkflowTest extends AbstractWorkflowTests {
 
         WorkflowTestRequest testRequest = getWorkflowTestRequest(def);
 
-        // The following are the dynamic tasks which are not present in the workflow definition but
+        // The following are the dynamic tasks which are not present in the workflow
+        // definition but
         // are created by dynamic fork
-        testRequest
-                .getTaskRefToMockOutput()
-                .put("_x_test_worker_0_0", List.of(new WorkflowTestRequest.TaskMock()));
-        testRequest
-                .getTaskRefToMockOutput()
-                .put("_x_test_worker_0_1", List.of(new WorkflowTestRequest.TaskMock()));
-        testRequest
-                .getTaskRefToMockOutput()
-                .put("_x_test_worker_0_2", List.of(new WorkflowTestRequest.TaskMock()));
-        testRequest
-                .getTaskRefToMockOutput()
-                .put("custom_task_1__1", List.of(new WorkflowTestRequest.TaskMock()));
-        testRequest
-                .getTaskRefToMockOutput()
-                .put("custom_task_5", List.of(new WorkflowTestRequest.TaskMock()));
+        testRequest.getTaskRefToMockOutput().put("_x_test_worker_0_0", List.of(new WorkflowTestRequest.TaskMock()));
+        testRequest.getTaskRefToMockOutput().put("_x_test_worker_0_1", List.of(new WorkflowTestRequest.TaskMock()));
+        testRequest.getTaskRefToMockOutput().put("_x_test_worker_0_2", List.of(new WorkflowTestRequest.TaskMock()));
+        testRequest.getTaskRefToMockOutput().put("custom_task_1__1", List.of(new WorkflowTestRequest.TaskMock()));
+        testRequest.getTaskRefToMockOutput().put("custom_task_5", List.of(new WorkflowTestRequest.TaskMock()));
 
         Workflow execution = workflowClient.testWorkflow(testRequest);
         assertNotNull(execution);
@@ -61,9 +52,7 @@ public class SubWorkflowTest extends AbstractWorkflowTests {
         assertEquals(Workflow.WorkflowStatus.COMPLETED, execution.getStatus());
 
         // That the workflow executes a wait task
-        assertTrue(
-                execution.getTasks().stream()
-                        .anyMatch(t -> t.getReferenceTaskName().equals("wait")));
+        assertTrue(execution.getTasks().stream().anyMatch(t -> t.getReferenceTaskName().equals("wait")));
 
         // That the call_made variable was set to True
         assertEquals(true, execution.getVariables().get("call_made"));

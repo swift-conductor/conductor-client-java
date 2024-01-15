@@ -13,7 +13,7 @@
  */
 package com.swiftconductor.conductor.client.http
 
-import com.swiftconductor.conductor.client.exception.ConductorClientException
+import com.swiftconductor.conductor.client.exception.ClientException
 import com.swiftconductor.conductor.common.metadata.workflow.WorkflowDef
 
 import com.sun.jersey.api.client.ClientResponse
@@ -53,7 +53,7 @@ class MetadataClientSpec extends ClientSpecification {
 
         then:
         1 * requestHandler.delete(uri, null) >> { throw new RuntimeException(clientResponse) }
-        def ex = thrown(ConductorClientException.class)
+        def ex = thrown(ClientException.class)
         ex.message == "Unable to invoke Conductor API with uri: $uri, runtime exception occurred"
     }
 

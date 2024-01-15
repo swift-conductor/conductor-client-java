@@ -24,7 +24,8 @@ public class Join extends Task<Join> {
 
     /**
      * @param taskReferenceName
-     * @param joinOn List of task reference names to join on
+     * @param joinOn
+     *            List of task reference names to join on
      */
     public Join(String taskReferenceName, String... joinOn) {
         super(taskReferenceName, TaskType.JOIN);

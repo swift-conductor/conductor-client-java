@@ -38,7 +38,9 @@ import com.swiftconductor.conductor.common.utils.ExternalPayloadStorage;
 import static com.swiftconductor.conductor.common.metadata.tasks.TaskType.TASK_TYPE_CUSTOM;
 import static com.swiftconductor.conductor.common.metadata.tasks.TaskType.TASK_TYPE_SUB_WORKFLOW;
 
-/** A {@link ExternalPayloadStorage} implementation that stores payload in file. */
+/**
+ * A {@link ExternalPayloadStorage} implementation that stores payload in file.
+ */
 @ConditionalOnProperty(name = "conductor.external-payload-storage.type", havingValue = "mock")
 @Component
 public class MockExternalPayloadStorage implements ExternalPayloadStorage {
@@ -52,15 +54,11 @@ public class MockExternalPayloadStorage implements ExternalPayloadStorage {
     public MockExternalPayloadStorage(ObjectMapper objectMapper) throws IOException {
         this.objectMapper = objectMapper;
         this.payloadDir = Files.createTempDirectory("payloads").toFile();
-        LOGGER.info(
-                "{} initialized in directory: {}",
-                this.getClass().getSimpleName(),
-                payloadDir.getAbsolutePath());
+        LOGGER.info("{} initialized in directory: {}", this.getClass().getSimpleName(), payloadDir.getAbsolutePath());
     }
 
     @Override
-    public ExternalStorageLocation getLocation(
-            Operation operation, PayloadType payloadType, String path) {
+    public ExternalStorageLocation getLocation(Operation operation, PayloadType payloadType, String path) {
         ExternalStorageLocation location = new ExternalStorageLocation();
         location.setPath(UUID.randomUUID() + ".json");
         return location;
@@ -77,7 +75,8 @@ public class MockExternalPayloadStorage implements ExternalPayloadStorage {
             IOUtils.copy(payload, new FileOutputStream(file));
             LOGGER.debug("Written to {}", filePath);
         } catch (IOException e) {
-            // just handle this exception here and return empty map so that test will fail in case
+            // just handle this exception here and return empty map so that test will fail
+            // in case
             // this exception is thrown
             LOGGER.error("Error writing to {}", filePath);
         } finally {
@@ -126,8 +125,7 @@ public class MockExternalPayloadStorage implements ExternalPayloadStorage {
             customWorkflowTask.setName("integration_task_10");
             customWorkflowTask.setTaskReferenceName("t10");
             customWorkflowTask.setType(TASK_TYPE_CUSTOM);
-            customWorkflowTask.setInputParameters(
-                    Collections.singletonMap("p1", "${workflow.input.imageType}"));
+            customWorkflowTask.setInputParameters(Collections.singletonMap("p1", "${workflow.input.imageType}"));
 
             WorkflowDef subWorkflowDef = new WorkflowDef();
             subWorkflowDef.setName("one_task_workflow");
@@ -147,10 +145,10 @@ public class MockExternalPayloadStorage implements ExternalPayloadStorage {
             subWorkflowTask.setSubWorkflowParam(subWorkflowParams);
 
             dynamicForkLargePayload.put("dynamicTasks", List.of(subWorkflowTask));
-            dynamicForkLargePayload.put(
-                    "dynamicTasksInput", Map.of("large_payload_subworkflow", largePayload));
+            dynamicForkLargePayload.put("dynamicTasksInput", Map.of("large_payload_subworkflow", largePayload));
         } catch (IOException e) {
-            // just handle this exception here and return empty map so that test will fail in case
+            // just handle this exception here and return empty map so that test will fail
+            // in case
             // this exception is thrown
         }
         return dynamicForkLargePayload;
@@ -178,7 +176,8 @@ public class MockExternalPayloadStorage implements ExternalPayloadStorage {
                 largePayload.put(String.valueOf(i), payload);
             }
         } catch (IOException e) {
-            // just handle this exception here and return empty map so that test will fail in case
+            // just handle this exception here and return empty map so that test will fail
+            // in case
             // this exception is thrown
         }
         return largePayload;

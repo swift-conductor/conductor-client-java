@@ -48,8 +48,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
-@TestPropertySource(
-        properties = {"conductor.indexing.enabled=true", "conductor.elasticsearch.version=6"})
+@TestPropertySource(properties = { "conductor.indexing.enabled=true", "conductor.elasticsearch.version=6" })
 public abstract class AbstractEndToEndTest {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractEndToEndTest.class);
@@ -60,10 +59,12 @@ public abstract class AbstractEndToEndTest {
     private static final String DEFAULT_NULL_VALUE = "null";
     protected static final String DEFAULT_EMAIL_ADDRESS = "test@harness.com";
 
-    private static final ElasticsearchContainer container =
-            new ElasticsearchContainer(
-                    DockerImageName.parse("docker.elastic.co/elasticsearch/elasticsearch-oss")
-                            .withTag("6.8.17")); // this should match the client version
+    private static final ElasticsearchContainer container = new ElasticsearchContainer(
+            DockerImageName.parse("docker.elastic.co/elasticsearch/elasticsearch-oss").withTag("6.8.17")); // this
+                                                                                                           // should
+                                                                                                           // match the
+                                                                                                           // client
+                                                                                                           // version
 
     private static RestClient restClient;
 
@@ -160,8 +161,7 @@ public abstract class AbstractEndToEndTest {
     public void testEphemeralWorkflowsWithEphemeralAndStoredTasks() {
         createAndRegisterTaskDefinitions("storedTask", 1);
 
-        WorkflowDef workflowDefinition =
-                createWorkflowDefinition("testEphemeralWorkflowsWithEphemeralAndStoredTasks");
+        WorkflowDef workflowDefinition = createWorkflowDefinition("testEphemeralWorkflowsWithEphemeralAndStoredTasks");
 
         WorkflowTask workflowTask1 = createWorkflowTask("ephemeralTask1");
         TaskDef taskDefinition1 = createTaskDefinition("ephemeralTaskDef1");
@@ -245,19 +245,11 @@ public abstract class AbstractEndToEndTest {
         return workflowDefinition;
     }
 
-    protected List<TaskDef> createAndRegisterTaskDefinitions(
-            String prefixTaskDefinition, int numberOfTaskDefinitions) {
+    protected List<TaskDef> createAndRegisterTaskDefinitions(String prefixTaskDefinition, int numberOfTaskDefinitions) {
         String prefix = Optional.ofNullable(prefixTaskDefinition).orElse(TASK_DEFINITION_PREFIX);
         List<TaskDef> definitions = new LinkedList<>();
         for (int i = 0; i < numberOfTaskDefinitions; i++) {
-            TaskDef def =
-                    new TaskDef(
-                            prefix + i,
-                            "task " + i + DEFAULT_DESCRIPTION,
-                            DEFAULT_EMAIL_ADDRESS,
-                            3,
-                            60,
-                            60);
+            TaskDef def = new TaskDef(prefix + i, "task " + i + DEFAULT_DESCRIPTION, DEFAULT_EMAIL_ADDRESS, 3, 60, 60);
             def.setTimeoutPolicy(TaskDef.TimeoutPolicy.RETRY);
             definitions.add(def);
         }
@@ -269,8 +261,7 @@ public abstract class AbstractEndToEndTest {
         return nameResource + " " + DEFAULT_DESCRIPTION;
     }
 
-    protected abstract String startWorkflow(
-            String workflowExecutionName, WorkflowDef workflowDefinition);
+    protected abstract String startWorkflow(String workflowExecutionName, WorkflowDef workflowDefinition);
 
     protected abstract Workflow getWorkflow(String workflowId, boolean includeTasks);
 

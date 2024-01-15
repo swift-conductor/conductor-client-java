@@ -38,9 +38,11 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringRunner.class)
 public class WorkflowClientTest {
 
-    @Mock ProtoMapper mockedProtoMapper;
+    @Mock
+    ProtoMapper mockedProtoMapper;
 
-    @Mock WorkflowServiceGrpc.WorkflowServiceBlockingStub mockedStub;
+    @Mock
+    WorkflowServiceGrpc.WorkflowServiceBlockingStub mockedStub;
 
     WorkflowClient workflowClient;
 
@@ -54,16 +56,11 @@ public class WorkflowClientTest {
     @Test
     public void testSearch() {
         WorkflowSummary workflow = mock(WorkflowSummary.class);
-        WorkflowSummaryPb.WorkflowSummary workflowPB =
-                mock(WorkflowSummaryPb.WorkflowSummary.class);
+        WorkflowSummaryPb.WorkflowSummary workflowPB = mock(WorkflowSummaryPb.WorkflowSummary.class);
         when(mockedProtoMapper.fromProto(workflowPB)).thenReturn(workflow);
-        WorkflowServicePb.WorkflowSummarySearchResult result =
-                WorkflowServicePb.WorkflowSummarySearchResult.newBuilder()
-                        .addResults(workflowPB)
-                        .setTotalHits(1)
-                        .build();
-        SearchPb.Request searchRequest =
-                SearchPb.Request.newBuilder().setQuery("test query").build();
+        WorkflowServicePb.WorkflowSummarySearchResult result = WorkflowServicePb.WorkflowSummarySearchResult
+                .newBuilder().addResults(workflowPB).setTotalHits(1).build();
+        SearchPb.Request searchRequest = SearchPb.Request.newBuilder().setQuery("test query").build();
         when(mockedStub.search(searchRequest)).thenReturn(result);
         SearchResult<WorkflowSummary> searchResult = workflowClient.search("test query");
         assertEquals(1, searchResult.getTotalHits());
@@ -75,13 +72,9 @@ public class WorkflowClientTest {
         Workflow workflow = mock(Workflow.class);
         WorkflowPb.Workflow workflowPB = mock(WorkflowPb.Workflow.class);
         when(mockedProtoMapper.fromProto(workflowPB)).thenReturn(workflow);
-        WorkflowServicePb.WorkflowSearchResult result =
-                WorkflowServicePb.WorkflowSearchResult.newBuilder()
-                        .addResults(workflowPB)
-                        .setTotalHits(1)
-                        .build();
-        SearchPb.Request searchRequest =
-                SearchPb.Request.newBuilder().setQuery("test query").build();
+        WorkflowServicePb.WorkflowSearchResult result = WorkflowServicePb.WorkflowSearchResult.newBuilder()
+                .addResults(workflowPB).setTotalHits(1).build();
+        SearchPb.Request searchRequest = SearchPb.Request.newBuilder().setQuery("test query").build();
         when(mockedStub.searchV2(searchRequest)).thenReturn(result);
         SearchResult<Workflow> searchResult = workflowClient.searchV2("test query");
         assertEquals(1, searchResult.getTotalHits());
@@ -91,25 +84,14 @@ public class WorkflowClientTest {
     @Test
     public void testSearchWithParams() {
         WorkflowSummary workflow = mock(WorkflowSummary.class);
-        WorkflowSummaryPb.WorkflowSummary workflowPB =
-                mock(WorkflowSummaryPb.WorkflowSummary.class);
+        WorkflowSummaryPb.WorkflowSummary workflowPB = mock(WorkflowSummaryPb.WorkflowSummary.class);
         when(mockedProtoMapper.fromProto(workflowPB)).thenReturn(workflow);
-        WorkflowServicePb.WorkflowSummarySearchResult result =
-                WorkflowServicePb.WorkflowSummarySearchResult.newBuilder()
-                        .addResults(workflowPB)
-                        .setTotalHits(1)
-                        .build();
-        SearchPb.Request searchRequest =
-                SearchPb.Request.newBuilder()
-                        .setStart(1)
-                        .setSize(5)
-                        .setSort("*")
-                        .setFreeText("*")
-                        .setQuery("test query")
-                        .build();
+        WorkflowServicePb.WorkflowSummarySearchResult result = WorkflowServicePb.WorkflowSummarySearchResult
+                .newBuilder().addResults(workflowPB).setTotalHits(1).build();
+        SearchPb.Request searchRequest = SearchPb.Request.newBuilder().setStart(1).setSize(5).setSort("*")
+                .setFreeText("*").setQuery("test query").build();
         when(mockedStub.search(searchRequest)).thenReturn(result);
-        SearchResult<WorkflowSummary> searchResult =
-                workflowClient.search(1, 5, "*", "*", "test query");
+        SearchResult<WorkflowSummary> searchResult = workflowClient.search(1, 5, "*", "*", "test query");
         assertEquals(1, searchResult.getTotalHits());
         assertEquals(workflow, searchResult.getResults().get(0));
     }
@@ -119,19 +101,10 @@ public class WorkflowClientTest {
         Workflow workflow = mock(Workflow.class);
         WorkflowPb.Workflow workflowPB = mock(WorkflowPb.Workflow.class);
         when(mockedProtoMapper.fromProto(workflowPB)).thenReturn(workflow);
-        WorkflowServicePb.WorkflowSearchResult result =
-                WorkflowServicePb.WorkflowSearchResult.newBuilder()
-                        .addResults(workflowPB)
-                        .setTotalHits(1)
-                        .build();
-        SearchPb.Request searchRequest =
-                SearchPb.Request.newBuilder()
-                        .setStart(1)
-                        .setSize(5)
-                        .setSort("*")
-                        .setFreeText("*")
-                        .setQuery("test query")
-                        .build();
+        WorkflowServicePb.WorkflowSearchResult result = WorkflowServicePb.WorkflowSearchResult.newBuilder()
+                .addResults(workflowPB).setTotalHits(1).build();
+        SearchPb.Request searchRequest = SearchPb.Request.newBuilder().setStart(1).setSize(5).setSort("*")
+                .setFreeText("*").setQuery("test query").build();
         when(mockedStub.searchV2(searchRequest)).thenReturn(result);
         SearchResult<Workflow> searchResult = workflowClient.searchV2(1, 5, "*", "*", "test query");
         assertEquals(1, searchResult.getTotalHits());
@@ -144,19 +117,10 @@ public class WorkflowClientTest {
         Workflow workflow = mock(Workflow.class);
         WorkflowPb.Workflow workflowPB = mock(WorkflowPb.Workflow.class);
         when(mockedProtoMapper.fromProto(workflowPB)).thenReturn(workflow);
-        WorkflowServicePb.WorkflowSearchResult result =
-                WorkflowServicePb.WorkflowSearchResult.newBuilder()
-                        .addResults(workflowPB)
-                        .setTotalHits(1)
-                        .build();
-        SearchPb.Request searchRequest =
-                SearchPb.Request.newBuilder()
-                        .setStart(1)
-                        .setSize(5)
-                        .setSort("*")
-                        .setFreeText("*")
-                        .setQuery("test query")
-                        .build();
+        WorkflowServicePb.WorkflowSearchResult result = WorkflowServicePb.WorkflowSearchResult.newBuilder()
+                .addResults(workflowPB).setTotalHits(1).build();
+        SearchPb.Request searchRequest = SearchPb.Request.newBuilder().setStart(1).setSize(5).setSort("*")
+                .setFreeText("*").setQuery("test query").build();
         when(mockedStub.searchV2(searchRequest)).thenReturn(result);
         SearchResult<Workflow> searchResult = workflowClient.searchV2(1, 5, "*", "*", "test query");
         assertEquals(1, searchResult.getTotalHits());
@@ -164,8 +128,7 @@ public class WorkflowClientTest {
     }
 
     public WorkflowClient createClientWithManagedChannel() {
-        WorkflowClient workflowClient =
-                new WorkflowClient(ManagedChannelBuilder.forAddress("test", 0));
+        WorkflowClient workflowClient = new WorkflowClient(ManagedChannelBuilder.forAddress("test", 0));
         ReflectionTestUtils.setField(workflowClient, "stub", mockedStub);
         ReflectionTestUtils.setField(workflowClient, "protoMapper", mockedProtoMapper);
         return workflowClient;

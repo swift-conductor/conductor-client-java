@@ -19,10 +19,12 @@ import com.swiftconductor.conductor.sdk.workflow.def.WorkflowBuilder;
 
 public class SetVariable extends Task<SetVariable> {
     /**
-     * Sets the value of the variable in workflow. Used for workflow state management. Workflow
-     * state is a Map that is initialized using @see {@link WorkflowBuilder#variables(Object)}
+     * Sets the value of the variable in workflow. Used for workflow state
+     * management. Workflow state is a Map that is initialized using @see
+     * {@link WorkflowBuilder#variables(Object)}
      *
-     * @param taskReferenceName Use input methods to set the variable values
+     * @param taskReferenceName
+     *            Use input methods to set the variable values
      */
     public SetVariable(String taskReferenceName) {
         super(taskReferenceName, TaskType.SET_VARIABLE);

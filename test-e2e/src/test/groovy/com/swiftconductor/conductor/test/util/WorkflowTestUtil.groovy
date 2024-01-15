@@ -25,7 +25,7 @@ import com.swiftconductor.conductor.common.metadata.tasks.TaskResult
 import com.swiftconductor.conductor.common.metadata.workflow.WorkflowDef
 import com.swiftconductor.conductor.core.WorkflowContext
 import com.swiftconductor.conductor.core.exception.NotFoundException
-import com.swiftconductor.conductor.core.execution.WorkflowExecutor
+import com.swiftconductor.conductor.core.execution.WorkflowManager
 import com.swiftconductor.conductor.dao.QueueDAO
 import com.swiftconductor.conductor.model.WorkflowModel
 import com.swiftconductor.conductor.service.ExecutionService
@@ -56,7 +56,7 @@ class WorkflowTestUtil {
 
     private final MetadataService metadataService
     private final ExecutionService workflowExecutionService
-    private final WorkflowExecutor workflowExecutor
+    private final WorkflowManager workflowExecutor
     private final QueueDAO queueDAO
     private final ObjectMapper objectMapper
     private static final int RETRY_COUNT = 1
@@ -65,7 +65,7 @@ class WorkflowTestUtil {
 
     @Autowired
     WorkflowTestUtil(MetadataService metadataService, ExecutionService workflowExecutionService,
-                     WorkflowExecutor workflowExecutor, QueueDAO queueDAO, ObjectMapper objectMapper) {
+                     WorkflowManager workflowExecutor, QueueDAO queueDAO, ObjectMapper objectMapper) {
         this.metadataService = metadataService
         this.workflowExecutionService = workflowExecutionService
         this.workflowExecutor = workflowExecutor

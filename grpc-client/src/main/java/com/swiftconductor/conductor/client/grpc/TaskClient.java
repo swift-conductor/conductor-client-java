@@ -52,9 +52,12 @@ public class TaskClient extends ClientBase {
     /**
      * Perform a poll for a task of a specific task type.
      *
-     * @param taskType The taskType to poll for
-     * @param domain The domain of the task type
-     * @param workerId Name of the client worker. Used for logging.
+     * @param taskType
+     *            The taskType to poll for
+     * @param domain
+     *            The domain of the task type
+     * @param workerId
+     *            Name of the client worker. Used for logging.
      * @return Task waiting to be executed.
      */
     public Task pollTask(String taskType, String workerId, String domain) {
@@ -62,57 +65,54 @@ public class TaskClient extends ClientBase {
         Preconditions.checkArgument(StringUtils.isNotBlank(domain), "Domain cannot be blank");
         Preconditions.checkArgument(StringUtils.isNotBlank(workerId), "Worker id cannot be blank");
 
-        TaskServicePb.PollResponse response =
-                stub.poll(
-                        TaskServicePb.PollRequest.newBuilder()
-                                .setTaskType(taskType)
-                                .setWorkerId(workerId)
-                                .setDomain(domain)
-                                .build());
+        TaskServicePb.PollResponse response = stub.poll(TaskServicePb.PollRequest.newBuilder().setTaskType(taskType)
+                .setWorkerId(workerId).setDomain(domain).build());
         return protoMapper.fromProto(response.getTask());
     }
 
     /**
-     * Perform a batch poll for tasks by task type. Batch size is configurable by count.
+     * Perform a batch poll for tasks by task type. Batch size is configurable by
+     * count.
      *
-     * @param taskType Type of task to poll for
-     * @param workerId Name of the client worker. Used for logging.
-     * @param count Maximum number of tasks to be returned. Actual number of tasks returned can be
-     *     less than this number.
-     * @param timeoutInMillisecond Long poll wait timeout.
+     * @param taskType
+     *            Type of task to poll for
+     * @param workerId
+     *            Name of the client worker. Used for logging.
+     * @param count
+     *            Maximum number of tasks to be returned. Actual number of tasks
+     *            returned can be less than this number.
+     * @param timeoutInMillisecond
+     *            Long poll wait timeout.
      * @return List of tasks awaiting to be executed.
      */
-    public List<Task> batchPollTasksByTaskType(
-            String taskType, String workerId, int count, int timeoutInMillisecond) {
-        return Lists.newArrayList(
-                batchPollTasksByTaskTypeAsync(taskType, workerId, count, timeoutInMillisecond));
+    public List<Task> batchPollTasksByTaskType(String taskType, String workerId, int count, int timeoutInMillisecond) {
+        return Lists.newArrayList(batchPollTasksByTaskTypeAsync(taskType, workerId, count, timeoutInMillisecond));
     }
 
     /**
-     * Perform a batch poll for tasks by task type. Batch size is configurable by count. Returns an
-     * iterator that streams tasks as they become available through GRPC.
+     * Perform a batch poll for tasks by task type. Batch size is configurable by
+     * count. Returns an iterator that streams tasks as they become available
+     * through GRPC.
      *
-     * @param taskType Type of task to poll for
-     * @param workerId Name of the client worker. Used for logging.
-     * @param count Maximum number of tasks to be returned. Actual number of tasks returned can be
-     *     less than this number.
-     * @param timeoutInMillisecond Long poll wait timeout.
+     * @param taskType
+     *            Type of task to poll for
+     * @param workerId
+     *            Name of the client worker. Used for logging.
+     * @param count
+     *            Maximum number of tasks to be returned. Actual number of tasks
+     *            returned can be less than this number.
+     * @param timeoutInMillisecond
+     *            Long poll wait timeout.
      * @return Iterator of tasks awaiting to be executed.
      */
-    public Iterator<Task> batchPollTasksByTaskTypeAsync(
-            String taskType, String workerId, int count, int timeoutInMillisecond) {
+    public Iterator<Task> batchPollTasksByTaskTypeAsync(String taskType, String workerId, int count,
+            int timeoutInMillisecond) {
         Preconditions.checkArgument(StringUtils.isNotBlank(taskType), "Task type cannot be blank");
         Preconditions.checkArgument(StringUtils.isNotBlank(workerId), "Worker id cannot be blank");
         Preconditions.checkArgument(count > 0, "Count must be greater than 0");
 
-        Iterator<TaskPb.Task> it =
-                stub.batchPoll(
-                        TaskServicePb.BatchPollRequest.newBuilder()
-                                .setTaskType(taskType)
-                                .setWorkerId(workerId)
-                                .setCount(count)
-                                .setTimeout(timeoutInMillisecond)
-                                .build());
+        Iterator<TaskPb.Task> it = stub.batchPoll(TaskServicePb.BatchPollRequest.newBuilder().setTaskType(taskType)
+                .setWorkerId(workerId).setCount(count).setTimeout(timeoutInMillisecond).build());
 
         return Iterators.transform(it, protoMapper::fromProto);
     }
@@ -120,68 +120,58 @@ public class TaskClient extends ClientBase {
     /**
      * Updates the result of a task execution.
      *
-     * @param taskResult TaskResults to be updated.
+     * @param taskResult
+     *            TaskResults to be updated.
      */
     public void updateTask(TaskResult taskResult) {
         Preconditions.checkNotNull(taskResult, "Task result cannot be null");
         stub.updateTask(
-                TaskServicePb.UpdateTaskRequest.newBuilder()
-                        .setResult(protoMapper.toProto(taskResult))
-                        .build());
+                TaskServicePb.UpdateTaskRequest.newBuilder().setResult(protoMapper.toProto(taskResult)).build());
     }
 
     /**
      * Log execution messages for a task.
      *
-     * @param taskId id of the task
-     * @param logMessage the message to be logged
+     * @param taskId
+     *            id of the task
+     * @param logMessage
+     *            the message to be logged
      */
     public void logMessageForTask(String taskId, String logMessage) {
         Preconditions.checkArgument(StringUtils.isNotBlank(taskId), "Task id cannot be blank");
-        stub.addLog(
-                TaskServicePb.AddLogRequest.newBuilder()
-                        .setTaskId(taskId)
-                        .setLog(logMessage)
-                        .build());
+        stub.addLog(TaskServicePb.AddLogRequest.newBuilder().setTaskId(taskId).setLog(logMessage).build());
     }
 
     /**
      * Fetch execution logs for a task.
      *
-     * @param taskId id of the task.
+     * @param taskId
+     *            id of the task.
      */
     public List<TaskExecLog> getTaskLogs(String taskId) {
         Preconditions.checkArgument(StringUtils.isNotBlank(taskId), "Task id cannot be blank");
-        return stub
-                .getTaskLogs(
-                        TaskServicePb.GetTaskLogsRequest.newBuilder().setTaskId(taskId).build())
-                .getLogsList()
-                .stream()
-                .map(protoMapper::fromProto)
-                .collect(Collectors.toList());
+        return stub.getTaskLogs(TaskServicePb.GetTaskLogsRequest.newBuilder().setTaskId(taskId).build()).getLogsList()
+                .stream().map(protoMapper::fromProto).collect(Collectors.toList());
     }
 
     /**
      * Retrieve information about the task
      *
-     * @param taskId ID of the task
+     * @param taskId
+     *            ID of the task
      * @return Task details
      */
     public Task getTaskDetails(String taskId) {
         Preconditions.checkArgument(StringUtils.isNotBlank(taskId), "Task id cannot be blank");
-        return protoMapper.fromProto(
-                stub.getTask(TaskServicePb.GetTaskRequest.newBuilder().setTaskId(taskId).build())
-                        .getTask());
+        return protoMapper
+                .fromProto(stub.getTask(TaskServicePb.GetTaskRequest.newBuilder().setTaskId(taskId).build()).getTask());
     }
 
     public int getQueueSizeForTask(String taskType) {
         Preconditions.checkArgument(StringUtils.isNotBlank(taskType), "Task type cannot be blank");
 
-        TaskServicePb.QueueSizesResponse sizes =
-                stub.getQueueSizesForTasks(
-                        TaskServicePb.QueueSizesRequest.newBuilder()
-                                .addTaskTypes(taskType)
-                                .build());
+        TaskServicePb.QueueSizesResponse sizes = stub
+                .getQueueSizesForTasks(TaskServicePb.QueueSizesRequest.newBuilder().addTaskTypes(taskType).build());
 
         return sizes.getQueueForTaskOrDefault(taskType, 0);
     }
@@ -194,33 +184,19 @@ public class TaskClient extends ClientBase {
         return searchV2(null, null, null, null, query);
     }
 
-    public SearchResult<TaskSummary> search(
-            @Nullable Integer start,
-            @Nullable Integer size,
-            @Nullable String sort,
-            @Nullable String freeText,
-            @Nullable String query) {
+    public SearchResult<TaskSummary> search(@Nullable Integer start, @Nullable Integer size, @Nullable String sort,
+            @Nullable String freeText, @Nullable String query) {
         SearchPb.Request searchRequest = createSearchRequest(start, size, sort, freeText, query);
         TaskServicePb.TaskSummarySearchResult result = stub.search(searchRequest);
-        return new SearchResult<>(
-                result.getTotalHits(),
-                result.getResultsList().stream()
-                        .map(protoMapper::fromProto)
-                        .collect(Collectors.toList()));
+        return new SearchResult<>(result.getTotalHits(),
+                result.getResultsList().stream().map(protoMapper::fromProto).collect(Collectors.toList()));
     }
 
-    public SearchResult<Task> searchV2(
-            @Nullable Integer start,
-            @Nullable Integer size,
-            @Nullable String sort,
-            @Nullable String freeText,
-            @Nullable String query) {
+    public SearchResult<Task> searchV2(@Nullable Integer start, @Nullable Integer size, @Nullable String sort,
+            @Nullable String freeText, @Nullable String query) {
         SearchPb.Request searchRequest = createSearchRequest(start, size, sort, freeText, query);
         TaskServicePb.TaskSearchResult result = stub.searchV2(searchRequest);
-        return new SearchResult<>(
-                result.getTotalHits(),
-                result.getResultsList().stream()
-                        .map(protoMapper::fromProto)
-                        .collect(Collectors.toList()));
+        return new SearchResult<>(result.getTotalHits(),
+                result.getResultsList().stream().map(protoMapper::fromProto).collect(Collectors.toList()));
     }
 }

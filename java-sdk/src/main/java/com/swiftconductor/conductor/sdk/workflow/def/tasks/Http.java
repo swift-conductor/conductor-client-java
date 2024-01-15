@@ -95,12 +95,7 @@ public class Http extends Task<Http> {
 
     public static class Input {
         public enum HttpMethod {
-            PUT,
-            POST,
-            GET,
-            DELETE,
-            OPTIONS,
-            HEAD
+            PUT, POST, GET, DELETE, OPTIONS, HEAD
         }
 
         private HttpMethod method; // PUT, POST, GET, DELETE, OPTIONS, HEAD
@@ -122,7 +117,8 @@ public class Http extends Task<Http> {
         }
 
         /**
-         * @param method the method to set
+         * @param method
+         *            the method to set
          */
         public void setMethod(HttpMethod method) {
             this.method = method;
@@ -136,7 +132,8 @@ public class Http extends Task<Http> {
         }
 
         /**
-         * @param headers the headers to set
+         * @param headers
+         *            the headers to set
          */
         public void setHeaders(Map<String, Object> headers) {
             this.headers = headers;
@@ -150,7 +147,8 @@ public class Http extends Task<Http> {
         }
 
         /**
-         * @param body the body to set
+         * @param body
+         *            the body to set
          */
         public void setBody(Object body) {
             this.body = body;
@@ -164,7 +162,8 @@ public class Http extends Task<Http> {
         }
 
         /**
-         * @param uri the uri to set
+         * @param uri
+         *            the uri to set
          */
         public void setUri(String uri) {
             this.uri = uri;
@@ -178,7 +177,8 @@ public class Http extends Task<Http> {
         }
 
         /**
-         * @param vipAddress the vipAddress to set
+         * @param vipAddress
+         *            the vipAddress to set
          */
         public void setVipAddress(String vipAddress) {
             this.vipAddress = vipAddress;
@@ -192,7 +192,8 @@ public class Http extends Task<Http> {
         }
 
         /**
-         * @param accept the accept to set
+         * @param accept
+         *            the accept to set
          */
         public void setAccept(String accept) {
             this.accept = accept;
@@ -206,7 +207,8 @@ public class Http extends Task<Http> {
         }
 
         /**
-         * @param contentType the MIME content type to set
+         * @param contentType
+         *            the MIME content type to set
          */
         public void setContentType(String contentType) {
             this.contentType = contentType;
@@ -244,64 +246,30 @@ public class Http extends Task<Http> {
 
         @Override
         public String toString() {
-            return "Input{"
-                    + "method="
-                    + method
-                    + ", vipAddress='"
-                    + vipAddress
-                    + '\''
-                    + ", appName='"
-                    + appName
-                    + '\''
-                    + ", headers="
-                    + headers
-                    + ", uri='"
-                    + uri
-                    + '\''
-                    + ", body="
-                    + body
-                    + ", accept='"
-                    + accept
-                    + '\''
-                    + ", contentType='"
-                    + contentType
-                    + '\''
-                    + ", connectionTimeOut="
-                    + connectionTimeOut
-                    + ", readTimeOut="
-                    + readTimeOut
-                    + '}';
+            return "Input{" + "method=" + method + ", vipAddress='" + vipAddress + '\'' + ", appName='" + appName + '\''
+                    + ", headers=" + headers + ", uri='" + uri + '\'' + ", body=" + body + ", accept='" + accept + '\''
+                    + ", contentType='" + contentType + '\'' + ", connectionTimeOut=" + connectionTimeOut
+                    + ", readTimeOut=" + readTimeOut + '}';
         }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
             Input input = (Input) o;
-            return method == input.method
-                    && Objects.equals(vipAddress, input.vipAddress)
-                    && Objects.equals(appName, input.appName)
-                    && Objects.equals(headers, input.headers)
-                    && Objects.equals(uri, input.uri)
-                    && Objects.equals(body, input.body)
-                    && Objects.equals(accept, input.accept)
-                    && Objects.equals(contentType, input.contentType)
+            return method == input.method && Objects.equals(vipAddress, input.vipAddress)
+                    && Objects.equals(appName, input.appName) && Objects.equals(headers, input.headers)
+                    && Objects.equals(uri, input.uri) && Objects.equals(body, input.body)
+                    && Objects.equals(accept, input.accept) && Objects.equals(contentType, input.contentType)
                     && Objects.equals(connectionTimeOut, input.connectionTimeOut)
                     && Objects.equals(readTimeOut, input.readTimeOut);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(
-                    method,
-                    vipAddress,
-                    appName,
-                    headers,
-                    uri,
-                    body,
-                    accept,
-                    contentType,
-                    connectionTimeOut,
+            return Objects.hash(method, vipAddress, appName, headers, uri, body, accept, contentType, connectionTimeOut,
                     readTimeOut);
         }
     }

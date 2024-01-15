@@ -15,7 +15,7 @@ package com.swiftconductor.conductor.client.spring;
 
 import org.springframework.core.env.Environment;
 
-import com.swiftconductor.conductor.sdk.workflow.executor.task.WorkerConfiguration;
+import com.swiftconductor.conductor.sdk.worker.WorkerConfiguration;
 
 public class SpringWorkerConfiguration extends WorkerConfiguration {
 

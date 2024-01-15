@@ -30,10 +30,12 @@ public class ForkJoin extends Task<ForkJoin> {
     /**
      * execute task specified in the forkedTasks parameter in parallel.
      *
-     * <p>forkedTask is a two-dimensional list that executes the outermost list in parallel and list
-     * within that is executed sequentially.
+     * <p>
+     * forkedTask is a two-dimensional list that executes the outermost list in
+     * parallel and list within that is executed sequentially.
      *
-     * <p>e.g. [[task1, task2],[task3, task4],[task5]] are executed as:
+     * <p>
+     * e.g. [[task1, task2],[task3, task4],[task5]] are executed as:
      *
      * <pre>
      *                    ---------------
@@ -49,14 +51,18 @@ public class ForkJoin extends Task<ForkJoin> {
      *                 ---------------------
      * </pre>
      *
-     * <p>This method automatically adds a join that waits for all the *last* tasks in the fork
-     * (e.g. task2, task4 and task5 in the above example) to be completed.*
+     * <p>
+     * This method automatically adds a join that waits for all the *last* tasks in
+     * the fork (e.g. task2, task4 and task5 in the above example) to be completed.*
      *
-     * <p>Use join method @see {@link ForkJoin#joinOn(String...)} to override this behavior (note:
-     * not a common scenario)
+     * <p>
+     * Use join method @see {@link ForkJoin#joinOn(String...)} to override this
+     * behavior (note: not a common scenario)
      *
-     * @param taskReferenceName unique task reference name
-     * @param forkedTasks List of tasks to be executed in parallel
+     * @param taskReferenceName
+     *            unique task reference name
+     * @param forkedTasks
+     *            List of tasks to be executed in parallel
      */
     public ForkJoin(String taskReferenceName, Task<?>[]... forkedTasks) {
         super(taskReferenceName, TaskType.FORK_JOIN);
@@ -113,8 +119,7 @@ public class ForkJoin extends Task<ForkJoin> {
                 forkedWorkflowTasks.addAll(baseWorkflowTask.getWorkflowDefTasks());
             }
             forkTasks.add(forkedWorkflowTasks);
-            joinOnTaskRefNames.add(
-                    forkedWorkflowTasks.get(forkedWorkflowTasks.size() - 1).getTaskReferenceName());
+            joinOnTaskRefNames.add(forkedWorkflowTasks.get(forkedWorkflowTasks.size() - 1).getTaskReferenceName());
         }
         if (this.join != null) {
             fork.setJoinOn(List.of(this.join.getJoinOn()));

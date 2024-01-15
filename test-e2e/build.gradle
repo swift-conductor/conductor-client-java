@@ -1,6 +1,9 @@
 apply plugin: 'groovy'
 
 dependencies {
+    testImplementation project(":conductor-client")
+    testImplementation project(":conductor-grpc-client")
+
     testImplementation "com.swiftconductor.conductor:conductor-server:${revConductor}"
     testImplementation "com.swiftconductor.conductor:conductor-common:${revConductor}"
     testImplementation "com.swiftconductor.conductor:conductor-rest:${revConductor}"
@@ -9,8 +12,6 @@ dependencies {
     testImplementation "com.swiftconductor.conductor:conductor-cassandra-persistence:${revConductor}"
     testImplementation "com.swiftconductor.conductor:conductor-es6-persistence:${revConductor}"
     testImplementation "com.swiftconductor.conductor:conductor-grpc-server:${revConductor}"
-    testImplementation "com.swiftconductor.conductor:conductor-client:${revConductor}"
-    testImplementation "com.swiftconductor.conductor:conductor-grpc-client:${revConductor}"
     testImplementation "com.swiftconductor.conductor:conductor-json-jq-task:${revConductor}"
     testImplementation "com.swiftconductor.conductor:conductor-http-task:${revConductor}"
 

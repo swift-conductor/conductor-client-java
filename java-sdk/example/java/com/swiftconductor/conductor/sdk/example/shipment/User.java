@@ -31,15 +31,8 @@ public class User {
 
     private String billingId;
 
-    public User(
-            String name,
-            String email,
-            String addressLine,
-            String city,
-            String zipCode,
-            String countryCode,
-            String billingType,
-            String billingId) {
+    public User(String name, String email, String addressLine, String city, String zipCode, String countryCode,
+            String billingType, String billingId) {
         this.name = name;
         this.email = email;
         this.addressLine = addressLine;
@@ -50,7 +43,8 @@ public class User {
         this.billingId = billingId;
     }
 
-    public User() {}
+    public User() {
+    }
 
     public String getName() {
         return name;

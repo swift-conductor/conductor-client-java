@@ -13,12 +13,12 @@
  */
 package com.swiftconductor.conductor.client.sample;
 
-import com.swiftconductor.conductor.client.worker.Worker;
+import com.swiftconductor.conductor.client.worker.AbstractWorker;
 import com.swiftconductor.conductor.common.metadata.tasks.Task;
 import com.swiftconductor.conductor.common.metadata.tasks.TaskResult;
 import com.swiftconductor.conductor.common.metadata.tasks.TaskResult.Status;
 
-public class SampleWorker implements Worker {
+public class SampleWorker implements AbstractWorker {
 
     private final String taskDefName;
 

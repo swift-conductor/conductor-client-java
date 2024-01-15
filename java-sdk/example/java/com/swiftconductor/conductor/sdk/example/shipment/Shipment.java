@@ -24,7 +24,8 @@ public class Shipment {
         this.orderNo = orderNo;
     }
 
-    public Shipment() {}
+    public Shipment() {
+    }
 
     public String getUserId() {
         return userId;

@@ -48,8 +48,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(
-        properties = {"conductor.grpc-server.enabled=true", "conductor.grpc-server.port=8092"})
+@SpringBootTest(properties = { "conductor.grpc-server.enabled=true", "conductor.grpc-server.port=8092" })
 @TestPropertySource(locations = "classpath:application-integrationtest.properties")
 public abstract class AbstractGrpcEndToEndTest extends AbstractEndToEndTest {
 
@@ -60,10 +59,8 @@ public abstract class AbstractGrpcEndToEndTest extends AbstractEndToEndTest {
 
     @Override
     protected String startWorkflow(String workflowExecutionName, WorkflowDef workflowDefinition) {
-        StartWorkflowRequest workflowRequest =
-                new StartWorkflowRequest()
-                        .withName(workflowExecutionName)
-                        .withWorkflowDef(workflowDefinition);
+        StartWorkflowRequest workflowRequest = new StartWorkflowRequest().withName(workflowExecutionName)
+                .withWorkflowDef(workflowDefinition);
         return workflowClient.startWorkflow(workflowRequest);
     }
 
@@ -146,14 +143,12 @@ public abstract class AbstractGrpcEndToEndTest extends AbstractEndToEndTest {
         assertEquals(t0.getTaskReferenceName(), workflow.getTasks().get(0).getReferenceTaskName());
         assertEquals(workflowId, workflow.getWorkflowId());
 
-        List<String> runningIds =
-                workflowClient.getRunningWorkflow(def.getName(), def.getVersion());
+        List<String> runningIds = workflowClient.getRunningWorkflow(def.getName(), def.getVersion());
         assertNotNull(runningIds);
         assertEquals(1, runningIds.size());
         assertEquals(workflowId, runningIds.get(0));
 
-        List<Task> polled =
-                taskClient.batchPollTasksByTaskType("non existing task", "test", 1, 100);
+        List<Task> polled = taskClient.batchPollTasksByTaskType("non existing task", "test", 1, 100);
         assertNotNull(polled);
         assertEquals(0, polled.size());
 
@@ -185,60 +180,49 @@ public abstract class AbstractGrpcEndToEndTest extends AbstractEndToEndTest {
         assertEquals(task.getTaskId(), taskById.getTaskId());
 
         Thread.sleep(1000);
-        SearchResult<WorkflowSummary> searchResult =
-                workflowClient.search("workflowType='" + def.getName() + "'");
+        SearchResult<WorkflowSummary> searchResult = workflowClient.search("workflowType='" + def.getName() + "'");
         assertNotNull(searchResult);
         assertEquals(1, searchResult.getTotalHits());
         assertEquals(workflow.getWorkflowId(), searchResult.getResults().get(0).getWorkflowId());
 
-        SearchResult<Workflow> searchResultV2 =
-                workflowClient.searchV2("workflowType='" + def.getName() + "'");
+        SearchResult<Workflow> searchResultV2 = workflowClient.searchV2("workflowType='" + def.getName() + "'");
         assertNotNull(searchResultV2);
         assertEquals(1, searchResultV2.getTotalHits());
         assertEquals(workflow.getWorkflowId(), searchResultV2.getResults().get(0).getWorkflowId());
 
-        SearchResult<WorkflowSummary> searchResultAdvanced =
-                workflowClient.search(0, 1, null, null, "workflowType='" + def.getName() + "'");
+        SearchResult<WorkflowSummary> searchResultAdvanced = workflowClient.search(0, 1, null, null,
+                "workflowType='" + def.getName() + "'");
         assertNotNull(searchResultAdvanced);
         assertEquals(1, searchResultAdvanced.getTotalHits());
-        assertEquals(
-                workflow.getWorkflowId(), searchResultAdvanced.getResults().get(0).getWorkflowId());
+        assertEquals(workflow.getWorkflowId(), searchResultAdvanced.getResults().get(0).getWorkflowId());
 
-        SearchResult<Workflow> searchResultV2Advanced =
-                workflowClient.searchV2(0, 1, null, null, "workflowType='" + def.getName() + "'");
+        SearchResult<Workflow> searchResultV2Advanced = workflowClient.searchV2(0, 1, null, null,
+                "workflowType='" + def.getName() + "'");
         assertNotNull(searchResultV2Advanced);
         assertEquals(1, searchResultV2Advanced.getTotalHits());
-        assertEquals(
-                workflow.getWorkflowId(),
-                searchResultV2Advanced.getResults().get(0).getWorkflowId());
+        assertEquals(workflow.getWorkflowId(), searchResultV2Advanced.getResults().get(0).getWorkflowId());
 
-        SearchResult<TaskSummary> taskSearchResult =
-                taskClient.search("taskType='" + t0.getName() + "'");
+        SearchResult<TaskSummary> taskSearchResult = taskClient.search("taskType='" + t0.getName() + "'");
         assertNotNull(taskSearchResult);
         assertEquals(1, searchResultV2Advanced.getTotalHits());
         assertEquals(t0.getName(), taskSearchResult.getResults().get(0).getTaskDefName());
 
-        SearchResult<TaskSummary> taskSearchResultAdvanced =
-                taskClient.search(0, 1, null, null, "taskType='" + t0.getName() + "'");
+        SearchResult<TaskSummary> taskSearchResultAdvanced = taskClient.search(0, 1, null, null,
+                "taskType='" + t0.getName() + "'");
         assertNotNull(taskSearchResultAdvanced);
         assertEquals(1, taskSearchResultAdvanced.getTotalHits());
         assertEquals(t0.getName(), taskSearchResultAdvanced.getResults().get(0).getTaskDefName());
 
-        SearchResult<Task> taskSearchResultV2 =
-                taskClient.searchV2("taskType='" + t0.getName() + "'");
+        SearchResult<Task> taskSearchResultV2 = taskClient.searchV2("taskType='" + t0.getName() + "'");
         assertNotNull(taskSearchResultV2);
         assertEquals(1, searchResultV2Advanced.getTotalHits());
-        assertEquals(
-                t0.getTaskReferenceName(),
-                taskSearchResultV2.getResults().get(0).getReferenceTaskName());
+        assertEquals(t0.getTaskReferenceName(), taskSearchResultV2.getResults().get(0).getReferenceTaskName());
 
-        SearchResult<Task> taskSearchResultV2Advanced =
-                taskClient.searchV2(0, 1, null, null, "taskType='" + t0.getName() + "'");
+        SearchResult<Task> taskSearchResultV2Advanced = taskClient.searchV2(0, 1, null, null,
+                "taskType='" + t0.getName() + "'");
         assertNotNull(taskSearchResultV2Advanced);
         assertEquals(1, taskSearchResultV2Advanced.getTotalHits());
-        assertEquals(
-                t0.getTaskReferenceName(),
-                taskSearchResultV2Advanced.getResults().get(0).getReferenceTaskName());
+        assertEquals(t0.getTaskReferenceName(), taskSearchResultV2Advanced.getResults().get(0).getReferenceTaskName());
 
         workflowClient.terminateWorkflow(workflowId, "terminate reason");
         workflow = workflowClient.getWorkflow(workflowId, true);

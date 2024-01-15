@@ -18,8 +18,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class InputOutputGetter {
 
     public enum Field {
-        input,
-        output
+        input, output
     }
 
     public static final class Map {

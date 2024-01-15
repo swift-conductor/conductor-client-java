@@ -36,9 +36,9 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource.Builder;
-import com.swiftconductor.conductor.client.config.ConductorClientConfiguration;
-import com.swiftconductor.conductor.client.config.DefaultConductorClientConfiguration;
-import com.swiftconductor.conductor.client.exception.ConductorClientException;
+import com.swiftconductor.conductor.client.config.AbstractClientConfiguration;
+import com.swiftconductor.conductor.client.config.DefaultClientConfiguration;
+import com.swiftconductor.conductor.client.exception.ClientException;
 import com.swiftconductor.conductor.common.config.ObjectMapperProvider;
 import com.swiftconductor.conductor.common.model.BulkResponse;
 import com.swiftconductor.conductor.common.run.ExternalStorageLocation;
@@ -58,10 +58,9 @@ public abstract class ClientBase {
 
     protected PayloadStorage payloadStorage;
 
-    protected ConductorClientConfiguration conductorClientConfiguration;
+    protected AbstractClientConfiguration conductorClientConfiguration;
 
-    protected ClientBase(
-            ClientRequestHandler requestHandler, ConductorClientConfiguration clientConfiguration) {
+    protected ClientBase(ClientRequestHandler requestHandler, AbstractClientConfiguration clientConfiguration) {
         this.objectMapper = new ObjectMapperProvider().getObjectMapper();
 
         // https://github.com/FasterXML/jackson-databind/issues/2683
@@ -70,9 +69,7 @@ public abstract class ClientBase {
         }
 
         this.requestHandler = requestHandler;
-        this.conductorClientConfiguration =
-                ObjectUtils.defaultIfNull(
-                        clientConfiguration, new DefaultConductorClientConfiguration());
+        this.conductorClientConfiguration = ObjectUtils.defaultIfNull(clientConfiguration, new DefaultClientConfiguration());
         this.payloadStorage = new PayloadStorage(this);
     }
 
@@ -84,8 +81,7 @@ public abstract class ClientBase {
         deleteWithUriVariables(null, url, uriVariables);
     }
 
-    protected void deleteWithUriVariables(
-            Object[] queryParams, String url, Object... uriVariables) {
+    protected void deleteWithUriVariables(Object[] queryParams, String url, Object... uriVariables) {
         delete(queryParams, url, uriVariables, null);
     }
 
@@ -93,8 +89,7 @@ public abstract class ClientBase {
         return delete(queryParams, url, null, body);
     }
 
-    private BulkResponse delete(
-            Object[] queryParams, String url, Object[] uriVariables, Object body) {
+    private BulkResponse delete(Object[] queryParams, String url, Object[] uriVariables, Object body) {
         URI uri = null;
         BulkResponse response = null;
         try {
@@ -128,43 +123,20 @@ public abstract class ClientBase {
         postForEntity(url, null, null, type, uriVariables);
     }
 
-    protected <T> T postForEntity(
-            String url,
-            Object request,
-            Object[] queryParams,
-            Class<T> responseType,
+    protected <T> T postForEntity(String url, Object request, Object[] queryParams, Class<T> responseType,
             Object... uriVariables) {
-        return postForEntity(
-                url,
-                request,
-                queryParams,
-                responseType,
-                builder -> builder.post(responseType),
+        return postForEntity(url, request, queryParams, responseType, builder -> builder.post(responseType),
                 uriVariables);
     }
 
-    protected <T> T postForEntity(
-            String url,
-            Object request,
-            Object[] queryParams,
-            GenericType<T> responseType,
+    protected <T> T postForEntity(String url, Object request, Object[] queryParams, GenericType<T> responseType,
             Object... uriVariables) {
-        return postForEntity(
-                url,
-                request,
-                queryParams,
-                responseType,
-                builder -> builder.post(responseType),
+        return postForEntity(url, request, queryParams, responseType, builder -> builder.post(responseType),
                 uriVariables);
     }
 
-    private <T> T postForEntity(
-            String url,
-            Object request,
-            Object[] queryParams,
-            Object responseType,
-            Function<Builder, T> postWithEntity,
-            Object... uriVariables) {
+    private <T> T postForEntity(String url, Object request, Object[] queryParams, Object responseType,
+            Function<Builder, T> postWithEntity, Object... uriVariables) {
         URI uri = null;
         try {
             uri = getURIBuilder(root + url, queryParams).build(uriVariables);
@@ -182,22 +154,16 @@ public abstract class ClientBase {
         return null;
     }
 
-    protected <T> T getForEntity(
-            String url, Object[] queryParams, Class<T> responseType, Object... uriVariables) {
-        return getForEntity(
-                url, queryParams, response -> response.getEntity(responseType), uriVariables);
+    protected <T> T getForEntity(String url, Object[] queryParams, Class<T> responseType, Object... uriVariables) {
+        return getForEntity(url, queryParams, response -> response.getEntity(responseType), uriVariables);
     }
 
-    protected <T> T getForEntity(
-            String url, Object[] queryParams, GenericType<T> responseType, Object... uriVariables) {
-        return getForEntity(
-                url, queryParams, response -> response.getEntity(responseType), uriVariables);
+    protected <T> T getForEntity(String url, Object[] queryParams, GenericType<T> responseType,
+            Object... uriVariables) {
+        return getForEntity(url, queryParams, response -> response.getEntity(responseType), uriVariables);
     }
 
-    private <T> T getForEntity(
-            String url,
-            Object[] queryParams,
-            Function<ClientResponse, T> entityProvider,
+    private <T> T getForEntity(String url, Object[] queryParams, Function<ClientResponse, T> entityProvider,
             Object... uriVariables) {
         URI uri = null;
         ClientResponse clientResponse;
@@ -218,56 +184,56 @@ public abstract class ClientBase {
     }
 
     /**
-     * Uses the {@link PayloadStorage} for storing large payloads. Gets the uri for storing the
-     * payload from the server and then uploads to this location
+     * Uses the {@link PayloadStorage} for storing large payloads. Gets the uri for
+     * storing the payload from the server and then uploads to this location
      *
-     * @param payloadType the {@link
-     *     com.swiftconductor.conductor.common.utils.ExternalPayloadStorage.PayloadType} to be
-     *     uploaded
-     * @param payloadBytes the byte array containing the payload
-     * @param payloadSize the size of the payload
+     * @param payloadType
+     *            the
+     *            {@link com.swiftconductor.conductor.common.utils.ExternalPayloadStorage.PayloadType}
+     *            to be uploaded
+     * @param payloadBytes
+     *            the byte array containing the payload
+     * @param payloadSize
+     *            the size of the payload
      * @return the path where the payload is stored in external storage
      */
-    protected String uploadToExternalPayloadStorage(
-            ExternalPayloadStorage.PayloadType payloadType, byte[] payloadBytes, long payloadSize) {
+    protected String uploadToExternalPayloadStorage(ExternalPayloadStorage.PayloadType payloadType, byte[] payloadBytes,
+            long payloadSize) {
         Validate.isTrue(
                 payloadType.equals(ExternalPayloadStorage.PayloadType.WORKFLOW_INPUT)
                         || payloadType.equals(ExternalPayloadStorage.PayloadType.TASK_OUTPUT),
                 "Payload type must be workflow input or task output");
-        ExternalStorageLocation externalStorageLocation =
-                payloadStorage.getLocation(ExternalPayloadStorage.Operation.WRITE, payloadType, "");
-        payloadStorage.upload(
-                externalStorageLocation.getUri(),
-                new ByteArrayInputStream(payloadBytes),
-                payloadSize);
+        ExternalStorageLocation externalStorageLocation = payloadStorage
+                .getLocation(ExternalPayloadStorage.Operation.WRITE, payloadType, "");
+        payloadStorage.upload(externalStorageLocation.getUri(), new ByteArrayInputStream(payloadBytes), payloadSize);
         return externalStorageLocation.getPath();
     }
 
     /**
-     * Uses the {@link PayloadStorage} for downloading large payloads to be used by the client. Gets
-     * the uri of the payload fom the server and then downloads from this location.
+     * Uses the {@link PayloadStorage} for downloading large payloads to be used by
+     * the client. Gets the uri of the payload fom the server and then downloads
+     * from this location.
      *
-     * @param payloadType the {@link
-     *     com.swiftconductor.conductor.common.utils.ExternalPayloadStorage.PayloadType} to be
-     *     downloaded
-     * @param path the relative of the payload in external storage
+     * @param payloadType
+     *            the
+     *            {@link com.swiftconductor.conductor.common.utils.ExternalPayloadStorage.PayloadType}
+     *            to be downloaded
+     * @param path
+     *            the relative of the payload in external storage
      * @return the payload object that is stored in external storage
      */
     @SuppressWarnings("unchecked")
-    protected Map<String, Object> downloadFromExternalStorage(
-            ExternalPayloadStorage.PayloadType payloadType, String path) {
+    protected Map<String, Object> downloadFromExternalStorage(ExternalPayloadStorage.PayloadType payloadType,
+            String path) {
         Validate.notBlank(path, "uri cannot be blank");
-        ExternalStorageLocation externalStorageLocation =
-                payloadStorage.getLocation(
-                        ExternalPayloadStorage.Operation.READ, payloadType, path);
+        ExternalStorageLocation externalStorageLocation = payloadStorage
+                .getLocation(ExternalPayloadStorage.Operation.READ, payloadType, path);
         try (InputStream inputStream = payloadStorage.download(externalStorageLocation.getUri())) {
             return objectMapper.readValue(inputStream, Map.class);
         } catch (IOException e) {
-            String errorMsg =
-                    String.format(
-                            "Unable to download payload from external storage location: %s", path);
+            String errorMsg = String.format("Unable to download payload from external storage location: %s", path);
             LOGGER.error(errorMsg, e);
-            throw new ConductorClientException(errorMsg, e);
+            throw new ClientException(errorMsg, e);
         }
     }
 
@@ -299,28 +265,23 @@ public abstract class ClientBase {
     }
 
     private void handleClientHandlerException(ClientHandlerException exception, URI uri) {
-        String errorMessage =
-                String.format(
-                        "Unable to invoke Conductor API with uri: %s, failure to process request or response",
-                        uri);
+        String errorMessage = String
+                .format("Unable to invoke Conductor API with uri: %s, failure to process request or response", uri);
         LOGGER.error(errorMessage, exception);
-        throw new ConductorClientException(errorMessage, exception);
+        throw new ClientException(errorMessage, exception);
     }
 
     private void handleRuntimeException(RuntimeException exception, URI uri) {
-        String errorMessage =
-                String.format(
-                        "Unable to invoke Conductor API with uri: %s, runtime exception occurred",
-                        uri);
+        String errorMessage = String.format("Unable to invoke Conductor API with uri: %s, runtime exception occurred",
+                uri);
         LOGGER.error(errorMessage, exception);
-        throw new ConductorClientException(errorMessage, exception);
+        throw new ClientException(errorMessage, exception);
     }
 
     private void handleUniformInterfaceException(UniformInterfaceException exception, URI uri) {
         ClientResponse clientResponse = exception.getResponse();
         if (clientResponse == null) {
-            throw new ConductorClientException(
-                    String.format("Unable to invoke Conductor API with uri: %s", uri));
+            throw new ClientException(String.format("Unable to invoke Conductor API with uri: %s", uri));
         }
         try {
             if (clientResponse.getStatus() < 300) {
@@ -329,17 +290,15 @@ public abstract class ClientBase {
             String errorMessage = clientResponse.getEntity(String.class);
             LOGGER.warn(
                     "Unable to invoke Conductor API with uri: {}, unexpected response from server: statusCode={}, responseBody='{}'.",
-                    uri,
-                    clientResponse.getStatus(),
-                    errorMessage);
+                    uri, clientResponse.getStatus(), errorMessage);
             ErrorResponse errorResponse;
             try {
                 errorResponse = objectMapper.readValue(errorMessage, ErrorResponse.class);
             } catch (IOException e) {
-                throw new ConductorClientException(clientResponse.getStatus(), errorMessage);
+                throw new ClientException(clientResponse.getStatus(), errorMessage);
             }
-            throw new ConductorClientException(clientResponse.getStatus(), errorResponse);
-        } catch (ConductorClientException e) {
+            throw new ClientException(clientResponse.getStatus(), errorResponse);
+        } catch (ClientException e) {
             throw e;
         } catch (ClientHandlerException e) {
             handleClientHandlerException(e, uri);
@@ -361,8 +320,9 @@ public abstract class ClientBase {
     }
 
     /**
-     * Converts ClientResponse object to string with detailed debug information including status
-     * code, media type, response headers, and response body if exists.
+     * Converts ClientResponse object to string with detailed debug information
+     * including status code, media type, response headers, and response body if
+     * exists.
      */
     private String clientResponseToString(ClientResponse response) {
         if (response == null) {
@@ -378,7 +338,8 @@ public abstract class ClientBase {
                     builder.append(", response body: ").append(responseBody);
                 }
             } catch (RuntimeException ignore) {
-                // Ignore if there is no response body, or IO error - it may have already been read
+                // Ignore if there is no response body, or IO error - it may have already been
+                // read
                 // in certain scenario.
             }
         }

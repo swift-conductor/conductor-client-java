@@ -34,15 +34,15 @@ public class DynamicFork extends Task<DynamicFork> {
     private CustomTask forkPrepareTask;
 
     /**
-     * Dynamic fork task that executes a set of tasks in parallel which are determined at run time.
-     * Use cases: Based on the input, you want to fork N number of processes in parallel to be
-     * executed. The number N is not pre-determined at the definition time and so a regular ForkJoin
-     * cannot be used.
+     * Dynamic fork task that executes a set of tasks in parallel which are
+     * determined at run time. Use cases: Based on the input, you want to fork N
+     * number of processes in parallel to be executed. The number N is not
+     * pre-determined at the definition time and so a regular ForkJoin cannot be
+     * used.
      *
      * @param taskReferenceName
      */
-    public DynamicFork(
-            String taskReferenceName, String forkTasksParameter, String forkTasksInputsParameter) {
+    public DynamicFork(String taskReferenceName, String forkTasksParameter, String forkTasksInputsParameter) {
         super(taskReferenceName, TaskType.FORK_JOIN_DYNAMIC);
         this.join = new Join(taskReferenceName + "_join");
         this.forkTasksParameter = forkTasksParameter;
@@ -52,14 +52,16 @@ public class DynamicFork extends Task<DynamicFork> {
     }
 
     /**
-     * Dynamic fork task that executes a set of tasks in parallel which are determined at run time.
-     * Use cases: Based on the input, you want to fork N number of processes in parallel to be
-     * executed. The number N is not pre-determined at the definition time and so a regular ForkJoin
-     * cannot be used.
+     * Dynamic fork task that executes a set of tasks in parallel which are
+     * determined at run time. Use cases: Based on the input, you want to fork N
+     * number of processes in parallel to be executed. The number N is not
+     * pre-determined at the definition time and so a regular ForkJoin cannot be
+     * used.
      *
      * @param taskReferenceName
-     * @param forkPrepareTask A Task that produces the output as {@link DynamicForkInput} to specify
-     *     which tasks to fork.
+     * @param forkPrepareTask
+     *            A Task that produces the output as {@link DynamicForkInput} to
+     *            specify which tasks to fork.
      */
     public DynamicFork(String taskReferenceName, CustomTask forkPrepareTask) {
         super(taskReferenceName, TaskType.FORK_JOIN_DYNAMIC);
@@ -75,10 +77,8 @@ public class DynamicFork extends Task<DynamicFork> {
         super(workflowTask);
         String nameOfParamForForkTask = workflowTask.getDynamicForkTasksParam();
         String nameOfParamForForkTaskInput = workflowTask.getDynamicForkTasksInputParamName();
-        this.forkTasksParameter =
-                (String) workflowTask.getInputParameters().get(nameOfParamForForkTask);
-        this.forkTasksInputsParameter =
-                (String) workflowTask.getInputParameters().get(nameOfParamForForkTaskInput);
+        this.forkTasksParameter = (String) workflowTask.getInputParameters().get(nameOfParamForForkTask);
+        this.forkTasksInputsParameter = (String) workflowTask.getInputParameters().get(nameOfParamForForkTaskInput);
     }
 
     public Join getJoin() {

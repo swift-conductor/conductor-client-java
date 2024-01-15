@@ -14,32 +14,25 @@
 package com.swiftconductor.conductor.sdk.workflow.def;
 
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.swiftconductor.conductor.client.exception.ConductorClientException;
-import com.swiftconductor.conductor.common.metadata.tasks.TaskDef;
-import com.swiftconductor.conductor.common.metadata.tasks.TaskType;
 import com.swiftconductor.conductor.common.metadata.workflow.WorkflowDef;
 import com.swiftconductor.conductor.common.metadata.workflow.WorkflowTask;
-import com.swiftconductor.conductor.common.run.Workflow;
 import com.swiftconductor.conductor.sdk.workflow.def.tasks.Task;
 import com.swiftconductor.conductor.sdk.workflow.def.tasks.TaskRegistry;
-import com.swiftconductor.conductor.sdk.workflow.executor.WorkflowExecutor;
 import com.swiftconductor.conductor.sdk.workflow.utils.InputOutputGetter;
 import com.swiftconductor.conductor.sdk.workflow.utils.ObjectMapperProvider;
 
 /**
- * @param <T> Type of the workflow input
+ * @param <T>
+ *            Type of the workflow input
  */
 public class ConductorWorkflow<T> {
 
-    public static final InputOutputGetter input =
-            new InputOutputGetter("workflow", InputOutputGetter.Field.input);
+    public static final InputOutputGetter input = new InputOutputGetter("workflow", InputOutputGetter.Field.input);
 
-    public static final InputOutputGetter output =
-            new InputOutputGetter("workflow", InputOutputGetter.Field.output);
+    public static final InputOutputGetter output = new InputOutputGetter("workflow", InputOutputGetter.Field.output);
 
     private String name;
 
@@ -67,11 +60,8 @@ public class ConductorWorkflow<T> {
 
     private final ObjectMapper objectMapper = new ObjectMapperProvider().getObjectMapper();
 
-    private final WorkflowExecutor workflowExecutor;
-
-    public ConductorWorkflow(WorkflowExecutor workflowExecutor) {
+    public ConductorWorkflow() {
         this.workflowOutput = new HashMap<>();
-        this.workflowExecutor = workflowExecutor;
         this.restartable = true;
     }
 
@@ -168,80 +158,9 @@ public class ConductorWorkflow<T> {
     }
 
     /**
-     * Execute a dynamic workflow without creating a definition in metadata store.
-     *
-     * <p><br>
-     * <b>Note</b>: Use this with caution - as this does not promote re-usability of the workflows
-     *
-     * @param input Workflow Input - The input object is converted a JSON doc as an input to the
-     *     workflow
-     * @return
-     */
-    public CompletableFuture<Workflow> executeDynamic(T input) {
-        return workflowExecutor.executeWorkflow(this, input);
-    }
-
-    /**
-     * Executes the workflow using registered metadata definitions
-     *
-     * @see #registerWorkflow()
-     * @param input
-     * @return
-     */
-    public CompletableFuture<Workflow> execute(T input) {
-        return workflowExecutor.executeWorkflow(this.getName(), this.getVersion(), input);
-    }
-
-    /**
-     * Registers a new workflow in the server.
-     *
-     * @return true if the workflow is successfully registered. False if the workflow cannot be
-     *     registered and the workflow definition already exists on the server with given name +
-     *     version The call will throw a runtime exception if any of the tasks are missing
-     *     definitions on the server.
-     */
-    public boolean registerWorkflow() {
-        return registerWorkflow(false, false);
-    }
-
-    /**
-     * @param overwrite set to true if the workflow should be overwritten if the definition already
-     *     exists with the given name and version. <font color=red>Use with caution</font>
-     * @return true if success, false otherwise.
-     */
-    public boolean registerWorkflow(boolean overwrite) {
-        return registerWorkflow(overwrite, false);
-    }
-
-    /**
-     * @param overwrite set to true if the workflow should be overwritten if the definition already
-     *     exists with the given name and version. <font color=red>Use with caution</font>
-     * @param registerTasks if set to true, missing task definitions are registered with the default
-     *     configuration.
-     * @return true if success, false otherwise.
-     */
-    public boolean registerWorkflow(boolean overwrite, boolean registerTasks) {
-        WorkflowDef workflowDef = toWorkflowDef();
-        List<String> missing = getMissingTasks(workflowDef);
-        if (!missing.isEmpty()) {
-            if (!registerTasks) {
-                throw new RuntimeException(
-                        "Workflow cannot be registered.  The following tasks do not have definitions.  "
-                                + "Please register these tasks before creating the workflow.  Missing Tasks = "
-                                + missing);
-            } else {
-                String ownerEmail = this.ownerEmail;
-                missing.stream().forEach(taskName -> registerTaskDef(taskName, ownerEmail));
-            }
-        }
-        return workflowExecutor.registerWorkflow(workflowDef, overwrite);
-    }
-
-    /**
      * @return Convert to the WorkflowDef model used by the Metadata APIs
      */
     public WorkflowDef toWorkflowDef() {
-
         WorkflowDef def = new WorkflowDef();
         def.setName(name);
         def.setDescription(description);
@@ -268,16 +187,9 @@ public class ConductorWorkflow<T> {
      * @return
      */
     public static <T> ConductorWorkflow<T> fromWorkflowDef(WorkflowDef def) {
-        ConductorWorkflow<T> workflow = new ConductorWorkflow<>(null);
+        ConductorWorkflow<T> workflow = new ConductorWorkflow<>();
         fromWorkflowDef(workflow, def);
         return workflow;
-    }
-
-    public ConductorWorkflow<T> from(String workflowName, Integer workflowVersion) {
-        WorkflowDef def =
-                workflowExecutor.getMetadataClient().getWorkflowDef(workflowName, workflowVersion);
-        fromWorkflowDef(this, def);
-        return this;
     }
 
     private static <T> void fromWorkflowDef(ConductorWorkflow<T> workflow, WorkflowDef def) {
@@ -301,40 +213,12 @@ public class ConductorWorkflow<T> {
         }
     }
 
-    private List<String> getMissingTasks(WorkflowDef workflowDef) {
-        List<String> missing = new ArrayList<>();
-        workflowDef.collectTasks().stream()
-                .filter(workflowTask -> workflowTask.getType().equals(TaskType.TASK_TYPE_CUSTOM))
-                .map(WorkflowTask::getName)
-                .distinct()
-                .parallel()
-                .forEach(
-                        taskName -> {
-                            try {
-                                TaskDef taskDef =
-                                        workflowExecutor.getMetadataClient().getTaskDef(taskName);
-                            } catch (ConductorClientException cce) {
-                                if (cce.getStatus() == 404) {
-                                    missing.add(taskName);
-                                } else {
-                                    throw cce;
-                                }
-                            }
-                        });
-        return missing;
-    }
-
-    private void registerTaskDef(String taskName, String ownerEmail) {
-        TaskDef taskDef = new TaskDef();
-        taskDef.setName(taskName);
-        taskDef.setOwnerEmail(ownerEmail);
-        workflowExecutor.getMetadataClient().registerTaskDefs(Arrays.asList(taskDef));
-    }
-
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         ConductorWorkflow workflow = (ConductorWorkflow) o;
         return version == workflow.version && Objects.equals(name, workflow.name);
     }

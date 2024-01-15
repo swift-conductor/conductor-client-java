@@ -27,11 +27,12 @@ public class DoWhile extends Task<DoWhile> {
     private List<Task<?>> loopTasks = new ArrayList<>();
 
     /**
-     * Execute tasks in a loop determined by the condition set using condition parameter. The loop
-     * will continue till the condition is true
+     * Execute tasks in a loop determined by the condition set using condition
+     * parameter. The loop will continue till the condition is true
      *
      * @param taskReferenceName
-     * @param condition Javascript that evaluates to a boolean value
+     * @param condition
+     *            Javascript that evaluates to a boolean value
      * @param tasks
      */
     public DoWhile(String taskReferenceName, String condition, Task<?>... tasks) {
@@ -70,11 +71,7 @@ public class DoWhile extends Task<DoWhile> {
     }
 
     private String getForLoopCondition(int loopCount) {
-        return "if ( $."
-                + getTaskReferenceName()
-                + "['iteration'] < "
-                + loopCount
-                + ") { true; } else { false; }";
+        return "if ( $." + getTaskReferenceName() + "['iteration'] < " + loopCount + ") { true; } else { false; }";
     }
 
     public String getLoopCondition() {

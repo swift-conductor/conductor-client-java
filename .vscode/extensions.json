@@ -1,6 +1,7 @@
 {
     "recommendations": [
         "vscjava.vscode-java-pack",
-        "wmanth.jar-viewer"
+        "wmanth.jar-viewer",
+        "richardwillis.vscode-spotless-gradle"
     ]
 }

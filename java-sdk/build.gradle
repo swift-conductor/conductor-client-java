@@ -3,7 +3,7 @@ apply plugin: 'groovy'
 dependencies {
 
     implementation "com.swiftconductor.conductor:conductor-common:${revConductor}"
-    implementation "com.swiftconductor.conductor:conductor-client:${revConductor}"
+    implementation project(":conductor-client")
     
     implementation "com.fasterxml.jackson.core:jackson-databind:${revFasterXml}"
     implementation "com.google.guava:guava:${revGuava}"

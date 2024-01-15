@@ -34,8 +34,7 @@ public class TaskRegistry {
     public static Task<?> getTask(WorkflowTask workflowTask) {
         Class<? extends Task> clazz = taskTypeMap.get(workflowTask.getType());
         if (clazz == null) {
-            throw new UnsupportedOperationException(
-                    "No support to convert " + workflowTask.getType());
+            throw new UnsupportedOperationException("No support to convert " + workflowTask.getType());
         }
         Task<?> task = null;
         try {

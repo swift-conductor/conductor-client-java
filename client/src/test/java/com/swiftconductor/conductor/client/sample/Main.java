@@ -14,10 +14,11 @@
 package com.swiftconductor.conductor.client.sample;
 
 import java.util.Arrays;
+import java.util.Map;
 
-import com.swiftconductor.conductor.client.automator.TaskRunnerConfigurer;
+import com.swiftconductor.conductor.client.automation.WorkerHost;
 import com.swiftconductor.conductor.client.http.TaskClient;
-import com.swiftconductor.conductor.client.worker.Worker;
+import com.swiftconductor.conductor.client.worker.AbstractWorker;
 
 public class Main {
 
@@ -26,18 +27,15 @@ public class Main {
         TaskClient taskClient = new TaskClient();
         taskClient.setRootURI("http://localhost:8080/api/"); // Point this to the server API
 
-        int threadCount =
-                2; // number of threads used to execute workers.  To avoid starvation, should be
+        int threadCount = 2; // number of threads used to execute workers. To avoid starvation, should be
         // same or more than number of workers
 
-        Worker worker1 = new SampleWorker("task_1");
-        Worker worker2 = new SampleWorker("task_5");
+        AbstractWorker worker1 = new SampleWorker("task_1");
+        AbstractWorker worker2 = new SampleWorker("task_5");
 
-        // Create TaskRunnerConfigurer
-        TaskRunnerConfigurer configurer =
-                new TaskRunnerConfigurer.Builder(taskClient, Arrays.asList(worker1, worker2))
-                        .withThreadCount(threadCount)
-                        .build();
+        // Create WorkerHost
+        WorkerHost configurer = new WorkerHost.Builder(taskClient, Arrays.asList(worker1, worker2))
+                .withTaskThreadCount(Map.of("task_1", 1, "task_5", 1)).build();
 
         // Start the polling and execution of tasks
         configurer.init();

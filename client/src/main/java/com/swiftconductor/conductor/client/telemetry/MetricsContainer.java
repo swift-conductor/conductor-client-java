@@ -63,7 +63,8 @@ public class MetricsContainer {
     private static final Map<String, AtomicLong> GAUGES = new ConcurrentHashMap<>();
     private static final String CLASS_NAME = MetricsContainer.class.getSimpleName();
 
-    private MetricsContainer() {}
+    private MetricsContainer() {
+    }
 
     public static Timer getPollTimer(String taskType) {
         return getTimer(TASK_POLL_TIME, TASK_TYPE, taskType);
@@ -75,16 +76,14 @@ public class MetricsContainer {
 
     private static Timer getTimer(String name, String... additionalTags) {
         String key = CLASS_NAME + "." + name + "." + String.join(",", additionalTags);
-        return TIMERS.computeIfAbsent(
-                key,
-                k -> {
-                    List<Tag> tagList = getTags(additionalTags);
-                    tagList.add(new BasicTag("unit", TimeUnit.MILLISECONDS.name()));
-                    return REGISTRY.timer(name, tagList);
-                });
+        return TIMERS.computeIfAbsent(key, k -> {
+            List<Tag> tagList = getTags(additionalTags);
+            tagList.add(new BasicTag("unit", TimeUnit.MILLISECONDS.name()));
+            return REGISTRY.timer(name, tagList);
+        });
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private static List<Tag> getTags(String[] additionalTags) {
         List<Tag> tagList = new ArrayList();
         tagList.add(new BasicTag("class", CLASS_NAME));
@@ -101,22 +100,18 @@ public class MetricsContainer {
 
     private static Counter getCounter(String name, String... additionalTags) {
         String key = CLASS_NAME + "." + name + "." + String.join(",", additionalTags);
-        return COUNTERS.computeIfAbsent(
-                key,
-                k -> {
-                    List<Tag> tags = getTags(additionalTags);
-                    return REGISTRY.counter(name, tags);
-                });
+        return COUNTERS.computeIfAbsent(key, k -> {
+            List<Tag> tags = getTags(additionalTags);
+            return REGISTRY.counter(name, tags);
+        });
     }
 
     private static AtomicLong getGauge(String name, String... additionalTags) {
         String key = CLASS_NAME + "." + name + "." + String.join(",", additionalTags);
-        return GAUGES.computeIfAbsent(
-                key,
-                pollTimer -> {
-                    Id id = REGISTRY.createId(name, getTags(additionalTags));
-                    return PolledMeter.using(REGISTRY).withId(id).monitorValue(new AtomicLong(0));
-                });
+        return GAUGES.computeIfAbsent(key, pollTimer -> {
+            Id id = REGISTRY.createId(name, getTags(additionalTags));
+            return PolledMeter.using(REGISTRY).withId(id).monitorValue(new AtomicLong(0));
+        });
     }
 
     public static void incrementTaskExecutionQueueFullCount(String taskType) {
@@ -128,8 +123,7 @@ public class MetricsContainer {
     }
 
     public static void incrementTaskPollErrorCount(String taskType, Exception e) {
-        incrementCount(
-                TASK_POLL_ERROR, TASK_TYPE, taskType, EXCEPTION, e.getClass().getSimpleName());
+        incrementCount(TASK_POLL_ERROR, TASK_TYPE, taskType, EXCEPTION, e.getClass().getSimpleName());
     }
 
     public static void incrementTaskPausedCount(String taskType) {
@@ -137,8 +131,7 @@ public class MetricsContainer {
     }
 
     public static void incrementTaskExecutionErrorCount(String taskType, Throwable e) {
-        incrementCount(
-                TASK_EXECUTE_ERROR, TASK_TYPE, taskType, EXCEPTION, e.getClass().getSimpleName());
+        incrementCount(TASK_EXECUTE_ERROR, TASK_TYPE, taskType, EXCEPTION, e.getClass().getSimpleName());
     }
 
     public static void incrementTaskAckFailedCount(String taskType) {
@@ -146,8 +139,7 @@ public class MetricsContainer {
     }
 
     public static void incrementTaskAckErrorCount(String taskType, Exception e) {
-        incrementCount(
-                TASK_ACK_ERROR, TASK_TYPE, taskType, EXCEPTION, e.getClass().getSimpleName());
+        incrementCount(TASK_ACK_ERROR, TASK_TYPE, taskType, EXCEPTION, e.getClass().getSimpleName());
     }
 
     public static void recordTaskResultPayloadSize(String taskType, long payloadSize) {
@@ -155,17 +147,11 @@ public class MetricsContainer {
     }
 
     public static void incrementTaskUpdateErrorCount(String taskType, Throwable t) {
-        incrementCount(
-                TASK_UPDATE_ERROR, TASK_TYPE, taskType, EXCEPTION, t.getClass().getSimpleName());
+        incrementCount(TASK_UPDATE_ERROR, TASK_TYPE, taskType, EXCEPTION, t.getClass().getSimpleName());
     }
 
     public static void incrementTaskLeaseExtendErrorCount(String taskType, Throwable t) {
-        incrementCount(
-                TASK_LEASE_EXTEND_ERROR,
-                TASK_TYPE,
-                taskType,
-                EXCEPTION,
-                t.getClass().getSimpleName());
+        incrementCount(TASK_LEASE_EXTEND_ERROR, TASK_TYPE, taskType, EXCEPTION, t.getClass().getSimpleName());
     }
 
     public static void incrementTaskLeaseExtendCount(String taskType, int taskCount) {
@@ -176,30 +162,15 @@ public class MetricsContainer {
         getCounter(TASK_POLL_COUNTER, TASK_TYPE, taskType).increment(taskCount);
     }
 
-    public static void recordWorkflowInputPayloadSize(
-            String workflowType, String version, long payloadSize) {
-        getGauge(WORKFLOW_INPUT_SIZE, WORKFLOW_TYPE, workflowType, WORKFLOW_VERSION, version)
-                .getAndSet(payloadSize);
+    public static void recordWorkflowInputPayloadSize(String workflowType, String version, long payloadSize) {
+        getGauge(WORKFLOW_INPUT_SIZE, WORKFLOW_TYPE, workflowType, WORKFLOW_VERSION, version).getAndSet(payloadSize);
     }
 
-    public static void incrementExternalPayloadUsedCount(
-            String name, String operation, String payloadType) {
-        incrementCount(
-                EXTERNAL_PAYLOAD_USED,
-                ENTITY_NAME,
-                name,
-                OPERATION,
-                operation,
-                PAYLOAD_TYPE,
-                payloadType);
+    public static void incrementExternalPayloadUsedCount(String name, String operation, String payloadType) {
+        incrementCount(EXTERNAL_PAYLOAD_USED, ENTITY_NAME, name, OPERATION, operation, PAYLOAD_TYPE, payloadType);
     }
 
     public static void incrementWorkflowStartErrorCount(String workflowType, Throwable t) {
-        incrementCount(
-                WORKFLOW_START_ERROR,
-                WORKFLOW_TYPE,
-                workflowType,
-                EXCEPTION,
-                t.getClass().getSimpleName());
+        incrementCount(WORKFLOW_START_ERROR, WORKFLOW_TYPE, workflowType, EXCEPTION, t.getClass().getSimpleName());
     }
 }

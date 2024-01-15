@@ -137,7 +137,7 @@ public abstract class Task<T> {
         if (keyValues.length % 2 == 1) {
             throw new IllegalArgumentException("Not all keys have value specified");
         }
-        for (int i = 0; i < keyValues.length; ) {
+        for (int i = 0; i < keyValues.length;) {
             String key = keyValues[i].toString();
             Object value = keyValues[i + 1];
             input.put(key, value);
@@ -215,16 +215,17 @@ public abstract class Task<T> {
     }
 
     /**
-     * Override this method when the sub-class should update the default WorkflowTask generated
-     * using {@link #toWorkflowTask()}
+     * Override this method when the sub-class should update the default
+     * WorkflowTask generated using {@link #toWorkflowTask()}
      *
      * @param workflowTask
      */
-    protected void updateWorkflowTask(WorkflowTask workflowTask) {}
+    protected void updateWorkflowTask(WorkflowTask workflowTask) {
+    }
 
     /**
-     * Override this method when sub-classes will generate multiple workflow tasks. Used by tasks
-     * which have children tasks such as do_while, fork, etc.
+     * Override this method when sub-classes will generate multiple workflow tasks.
+     * Used by tasks which have children tasks such as do_while, fork, etc.
      *
      * @return
      */

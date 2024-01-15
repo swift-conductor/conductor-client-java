@@ -19,7 +19,7 @@ import org.springframework.test.context.TestPropertySource
 
 import com.swiftconductor.conductor.core.execution.AsyncSystemTaskExecutor
 import com.swiftconductor.conductor.core.execution.StartWorkflowInput
-import com.swiftconductor.conductor.core.execution.WorkflowExecutor
+import com.swiftconductor.conductor.core.execution.WorkflowManager
 import com.swiftconductor.conductor.core.operation.StartWorkflowOperation
 import com.swiftconductor.conductor.core.reconciliation.WorkflowSweeper
 import com.swiftconductor.conductor.service.ExecutionService
@@ -39,7 +39,7 @@ abstract class AbstractSpecification extends Specification {
     MetadataService metadataService
 
     @Autowired
-    WorkflowExecutor workflowExecutor
+    WorkflowManager workflowExecutor
 
     @Autowired
     WorkflowTestUtil workflowTestUtil

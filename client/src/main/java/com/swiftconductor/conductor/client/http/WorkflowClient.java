@@ -27,9 +27,9 @@ import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.client.filter.ClientFilter;
-import com.swiftconductor.conductor.client.config.ConductorClientConfiguration;
-import com.swiftconductor.conductor.client.config.DefaultConductorClientConfiguration;
-import com.swiftconductor.conductor.client.exception.ConductorClientException;
+import com.swiftconductor.conductor.client.config.AbstractClientConfiguration;
+import com.swiftconductor.conductor.client.config.DefaultClientConfiguration;
+import com.swiftconductor.conductor.client.exception.ClientException;
 import com.swiftconductor.conductor.client.telemetry.MetricsContainer;
 import com.swiftconductor.conductor.common.metadata.workflow.RerunWorkflowRequest;
 import com.swiftconductor.conductor.common.metadata.workflow.StartWorkflowRequest;
@@ -42,57 +42,64 @@ import com.swiftconductor.conductor.common.utils.ExternalPayloadStorage;
 
 public class WorkflowClient extends ClientBase {
 
-    private static final GenericType<SearchResult<WorkflowSummary>> searchResultWorkflowSummary =
-            new GenericType<SearchResult<WorkflowSummary>>() {};
+    private static final GenericType<SearchResult<WorkflowSummary>> searchResultWorkflowSummary = new GenericType<SearchResult<WorkflowSummary>>() {
+    };
 
-    private static final GenericType<SearchResult<Workflow>> searchResultWorkflow =
-            new GenericType<SearchResult<Workflow>>() {};
+    private static final GenericType<SearchResult<Workflow>> searchResultWorkflow = new GenericType<SearchResult<Workflow>>() {
+    };
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WorkflowClient.class);
 
     /** Creates a default workflow client */
     public WorkflowClient() {
-        this(new DefaultClientConfig(), new DefaultConductorClientConfiguration(), null);
+        this(new DefaultClientConfig(), new DefaultClientConfiguration(), null);
     }
 
     /**
-     * @param config REST Client configuration
+     * @param config
+     *            REST Client configuration
      */
     public WorkflowClient(ClientConfig config) {
-        this(config, new DefaultConductorClientConfiguration(), null);
+        this(config, new DefaultClientConfiguration(), null);
     }
 
     /**
-     * @param config REST Client configuration
-     * @param handler Jersey client handler. Useful when plugging in various http client interaction
-     *     modules (e.g. ribbon)
+     * @param config
+     *            REST Client configuration
+     * @param handler
+     *            Jersey client handler. Useful when plugging in various http client
+     *            interaction modules (e.g. ribbon)
      */
     public WorkflowClient(ClientConfig config, ClientHandler handler) {
-        this(config, new DefaultConductorClientConfiguration(), handler);
+        this(config, new DefaultClientConfiguration(), handler);
     }
 
     /**
-     * @param config REST Client configuration
-     * @param handler Jersey client handler. Useful when plugging in various http client interaction
-     *     modules (e.g. ribbon)
-     * @param filters Chain of client side filters to be applied per request
+     * @param config
+     *            REST Client configuration
+     * @param handler
+     *            Jersey client handler. Useful when plugging in various http client
+     *            interaction modules (e.g. ribbon)
+     * @param filters
+     *            Chain of client side filters to be applied per request
      */
     public WorkflowClient(ClientConfig config, ClientHandler handler, ClientFilter... filters) {
-        this(config, new DefaultConductorClientConfiguration(), handler, filters);
+        this(config, new DefaultClientConfiguration(), handler, filters);
     }
 
     /**
-     * @param config REST Client configuration
-     * @param clientConfiguration Specific properties configured for the client, see {@link
-     *     ConductorClientConfiguration}
-     * @param handler Jersey client handler. Useful when plugging in various http client interaction
-     *     modules (e.g. ribbon)
-     * @param filters Chain of client side filters to be applied per request
+     * @param config
+     *            REST Client configuration
+     * @param clientConfiguration
+     *            Specific properties configured for the client, see
+     *            {@link AbstractClientConfiguration}
+     * @param handler
+     *            Jersey client handler. Useful when plugging in various http client
+     *            interaction modules (e.g. ribbon)
+     * @param filters
+     *            Chain of client side filters to be applied per request
      */
-    public WorkflowClient(
-            ClientConfig config,
-            ConductorClientConfiguration clientConfiguration,
-            ClientHandler handler,
+    public WorkflowClient(ClientConfig config, AbstractClientConfiguration clientConfiguration, ClientHandler handler,
             ClientFilter... filters) {
         super(new ClientRequestHandler(config, handler, filters), clientConfiguration);
     }
@@ -102,84 +109,67 @@ public class WorkflowClient extends ClientBase {
     }
 
     /**
-     * Starts a workflow. If the size of the workflow input payload is bigger than {@link
-     * ConductorClientConfiguration#getWorkflowInputPayloadThresholdKB()}, it is uploaded to {@link
-     * ExternalPayloadStorage}, if enabled, else the workflow is rejected.
+     * Starts a workflow. If the size of the workflow input payload is bigger than
+     * {@link AbstractClientConfiguration#getWorkflowInputPayloadThresholdKB()}, it
+     * is uploaded to {@link ExternalPayloadStorage}, if enabled, else the workflow
+     * is rejected.
      *
-     * @param startWorkflowRequest the {@link StartWorkflowRequest} object to start the workflow.
+     * @param startWorkflowRequest
+     *            the {@link StartWorkflowRequest} object to start the workflow.
      * @return the id of the workflow instance that can be used for tracking.
-     * @throws ConductorClientException if {@link ExternalPayloadStorage} is disabled or if the
-     *     payload size is greater than {@link
-     *     ConductorClientConfiguration#getWorkflowInputMaxPayloadThresholdKB()}.
-     * @throws NullPointerException if {@link StartWorkflowRequest} is null or {@link
-     *     StartWorkflowRequest#getName()} is null.
-     * @throws IllegalArgumentException if {@link StartWorkflowRequest#getName()} is empty.
+     * @throws ClientException
+     *             if {@link ExternalPayloadStorage} is disabled or if the payload
+     *             size is greater than
+     *             {@link AbstractClientConfiguration#getWorkflowInputMaxPayloadThresholdKB()}.
+     * @throws NullPointerException
+     *             if {@link StartWorkflowRequest} is null or
+     *             {@link StartWorkflowRequest#getName()} is null.
+     * @throws IllegalArgumentException
+     *             if {@link StartWorkflowRequest#getName()} is empty.
      */
     public String startWorkflow(StartWorkflowRequest startWorkflowRequest) {
         Validate.notNull(startWorkflowRequest, "StartWorkflowRequest cannot be null");
         Validate.notBlank(startWorkflowRequest.getName(), "Workflow name cannot be null or empty");
-        Validate.isTrue(
-                StringUtils.isBlank(startWorkflowRequest.getExternalInputPayloadStoragePath()),
+        Validate.isTrue(StringUtils.isBlank(startWorkflowRequest.getExternalInputPayloadStoragePath()),
                 "External Storage Path must not be set");
 
-        String version =
-                startWorkflowRequest.getVersion() != null
-                        ? startWorkflowRequest.getVersion().toString()
-                        : "latest";
+        String version = startWorkflowRequest.getVersion() != null
+                ? startWorkflowRequest.getVersion().toString()
+                : "latest";
         try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
             objectMapper.writeValue(byteArrayOutputStream, startWorkflowRequest.getInput());
             byte[] workflowInputBytes = byteArrayOutputStream.toByteArray();
             long workflowInputSize = workflowInputBytes.length;
-            MetricsContainer.recordWorkflowInputPayloadSize(
-                    startWorkflowRequest.getName(), version, workflowInputSize);
-            if (workflowInputSize
-                    > conductorClientConfiguration.getWorkflowInputPayloadThresholdKB() * 1024L) {
+            MetricsContainer.recordWorkflowInputPayloadSize(startWorkflowRequest.getName(), version, workflowInputSize);
+            if (workflowInputSize > conductorClientConfiguration.getWorkflowInputPayloadThresholdKB() * 1024L) {
                 if (!conductorClientConfiguration.isExternalPayloadStorageEnabled()
-                        || (workflowInputSize
-                                > conductorClientConfiguration
-                                                .getWorkflowInputMaxPayloadThresholdKB()
-                                        * 1024L)) {
-                    String errorMsg =
-                            String.format(
-                                    "Input payload larger than the allowed threshold of: %d KB",
-                                    conductorClientConfiguration
-                                            .getWorkflowInputPayloadThresholdKB());
-                    throw new ConductorClientException(errorMsg);
+                        || (workflowInputSize > conductorClientConfiguration.getWorkflowInputMaxPayloadThresholdKB()
+                                * 1024L)) {
+                    String errorMsg = String.format("Input payload larger than the allowed threshold of: %d KB",
+                            conductorClientConfiguration.getWorkflowInputPayloadThresholdKB());
+                    throw new ClientException(errorMsg);
                 } else {
-                    MetricsContainer.incrementExternalPayloadUsedCount(
-                            startWorkflowRequest.getName(),
+                    MetricsContainer.incrementExternalPayloadUsedCount(startWorkflowRequest.getName(),
                             ExternalPayloadStorage.Operation.WRITE.name(),
                             ExternalPayloadStorage.PayloadType.WORKFLOW_INPUT.name());
-                    String externalStoragePath =
-                            uploadToExternalPayloadStorage(
-                                    ExternalPayloadStorage.PayloadType.WORKFLOW_INPUT,
-                                    workflowInputBytes,
-                                    workflowInputSize);
+                    String externalStoragePath = uploadToExternalPayloadStorage(
+                            ExternalPayloadStorage.PayloadType.WORKFLOW_INPUT, workflowInputBytes, workflowInputSize);
                     startWorkflowRequest.setExternalInputPayloadStoragePath(externalStoragePath);
                     startWorkflowRequest.setInput(null);
                 }
             }
         } catch (IOException e) {
-            String errorMsg =
-                    String.format(
-                            "Unable to start workflow:%s, version:%s",
-                            startWorkflowRequest.getName(), version);
+            String errorMsg = String.format("Unable to start workflow:%s, version:%s", startWorkflowRequest.getName(),
+                    version);
             LOGGER.error(errorMsg, e);
             MetricsContainer.incrementWorkflowStartErrorCount(startWorkflowRequest.getName(), e);
-            throw new ConductorClientException(errorMsg, e);
+            throw new ClientException(errorMsg, e);
         }
         try {
-            return postForEntity(
-                    "workflow",
-                    startWorkflowRequest,
-                    null,
-                    String.class,
-                    startWorkflowRequest.getName());
-        } catch (ConductorClientException e) {
-            String errorMsg =
-                    String.format(
-                            "Unable to send start workflow request:%s, version:%s",
-                            startWorkflowRequest.getName(), version);
+            return postForEntity("workflow", startWorkflowRequest, null, String.class, startWorkflowRequest.getName());
+        } catch (ClientException e) {
+            String errorMsg = String.format("Unable to send start workflow request:%s, version:%s",
+                    startWorkflowRequest.getName(), version);
             LOGGER.error(errorMsg, e);
             MetricsContainer.incrementWorkflowStartErrorCount(startWorkflowRequest.getName(), e);
             throw e;
@@ -189,18 +179,16 @@ public class WorkflowClient extends ClientBase {
     /**
      * Retrieve a workflow by workflow id
      *
-     * @param workflowId the id of the workflow
-     * @param includeTasks specify if the tasks in the workflow need to be returned
+     * @param workflowId
+     *            the id of the workflow
+     * @param includeTasks
+     *            specify if the tasks in the workflow need to be returned
      * @return the requested workflow
      */
     public Workflow getWorkflow(String workflowId, boolean includeTasks) {
         Validate.notBlank(workflowId, "workflow id cannot be blank");
-        Workflow workflow =
-                getForEntity(
-                        "workflow/{workflowId}",
-                        new Object[] {"includeTasks", includeTasks},
-                        Workflow.class,
-                        workflowId);
+        Workflow workflow = getForEntity("workflow/{workflowId}", new Object[] { "includeTasks", includeTasks },
+                Workflow.class, workflowId);
         populateWorkflowOutput(workflow);
         return workflow;
     }
@@ -208,123 +196,124 @@ public class WorkflowClient extends ClientBase {
     /**
      * Retrieve all workflows for a given correlation id and name
      *
-     * @param name the name of the workflow
-     * @param correlationId the correlation id
-     * @param includeClosed specify if all workflows are to be returned or only running workflows
-     * @param includeTasks specify if the tasks in the workflow need to be returned
+     * @param name
+     *            the name of the workflow
+     * @param correlationId
+     *            the correlation id
+     * @param includeClosed
+     *            specify if all workflows are to be returned or only running
+     *            workflows
+     * @param includeTasks
+     *            specify if the tasks in the workflow need to be returned
      * @return list of workflows for the given correlation id and name
      */
-    public List<Workflow> getWorkflows(
-            String name, String correlationId, boolean includeClosed, boolean includeTasks) {
+    public List<Workflow> getWorkflows(String name, String correlationId, boolean includeClosed, boolean includeTasks) {
         Validate.notBlank(name, "name cannot be blank");
         Validate.notBlank(correlationId, "correlationId cannot be blank");
 
-        Object[] params =
-                new Object[] {"includeClosed", includeClosed, "includeTasks", includeTasks};
-        List<Workflow> workflows =
-                getForEntity(
-                        "workflow/{name}/correlated/{correlationId}",
-                        params,
-                        new GenericType<List<Workflow>>() {},
-                        name,
-                        correlationId);
+        Object[] params = new Object[] { "includeClosed", includeClosed, "includeTasks", includeTasks };
+        List<Workflow> workflows = getForEntity("workflow/{name}/correlated/{correlationId}", params,
+                new GenericType<List<Workflow>>() {
+                }, name, correlationId);
         workflows.forEach(this::populateWorkflowOutput);
         return workflows;
     }
 
     /**
-     * Populates the workflow output from external payload storage if the external storage path is
-     * specified.
+     * Populates the workflow output from external payload storage if the external
+     * storage path is specified.
      *
-     * @param workflow the workflow for which the output is to be populated.
+     * @param workflow
+     *            the workflow for which the output is to be populated.
      */
     private void populateWorkflowOutput(Workflow workflow) {
         if (StringUtils.isNotBlank(workflow.getExternalOutputPayloadStoragePath())) {
-            MetricsContainer.incrementExternalPayloadUsedCount(
-                    workflow.getWorkflowName(),
+            MetricsContainer.incrementExternalPayloadUsedCount(workflow.getWorkflowName(),
                     ExternalPayloadStorage.Operation.READ.name(),
                     ExternalPayloadStorage.PayloadType.WORKFLOW_OUTPUT.name());
-            workflow.setOutput(
-                    downloadFromExternalStorage(
-                            ExternalPayloadStorage.PayloadType.WORKFLOW_OUTPUT,
-                            workflow.getExternalOutputPayloadStoragePath()));
+            workflow.setOutput(downloadFromExternalStorage(ExternalPayloadStorage.PayloadType.WORKFLOW_OUTPUT,
+                    workflow.getExternalOutputPayloadStoragePath()));
         }
     }
 
     /**
      * Removes a workflow from the system
      *
-     * @param workflowId the id of the workflow to be deleted
-     * @param archiveWorkflow flag to indicate if the workflow and associated tasks should be
-     *     archived before deletion
+     * @param workflowId
+     *            the id of the workflow to be deleted
+     * @param archiveWorkflow
+     *            flag to indicate if the workflow and associated tasks should be
+     *            archived before deletion
      */
     public void deleteWorkflow(String workflowId, boolean archiveWorkflow) {
         Validate.notBlank(workflowId, "Workflow id cannot be blank");
 
-        Object[] params = new Object[] {"archiveWorkflow", archiveWorkflow};
+        Object[] params = new Object[] { "archiveWorkflow", archiveWorkflow };
         deleteWithUriVariables(params, "workflow/{workflowId}/remove", workflowId);
     }
 
     /**
      * Terminates the execution of all given workflows instances
      *
-     * @param workflowIds the ids of the workflows to be terminated
-     * @param reason the reason to be logged and displayed
-     * @return the {@link BulkResponse} contains bulkErrorResults and bulkSuccessfulResults
+     * @param workflowIds
+     *            the ids of the workflows to be terminated
+     * @param reason
+     *            the reason to be logged and displayed
+     * @return the {@link BulkResponse} contains bulkErrorResults and
+     *         bulkSuccessfulResults
      */
     public BulkResponse terminateWorkflows(List<String> workflowIds, String reason) {
         Validate.isTrue(!workflowIds.isEmpty(), "workflow id cannot be blank");
-        return postForEntity(
-                "workflow/bulk/terminate",
-                workflowIds,
-                new Object[] {"reason", reason},
+        return postForEntity("workflow/bulk/terminate", workflowIds, new Object[] { "reason", reason },
                 BulkResponse.class);
     }
 
     /**
      * Retrieve all running workflow instances for a given name and version
      *
-     * @param workflowName the name of the workflow
-     * @param version the version of the wokflow definition. Defaults to 1.
+     * @param workflowName
+     *            the name of the workflow
+     * @param version
+     *            the version of the wokflow definition. Defaults to 1.
      * @return the list of running workflow instances
      */
     public List<String> getRunningWorkflow(String workflowName, Integer version) {
         Validate.notBlank(workflowName, "Workflow name cannot be blank");
-        return getForEntity(
-                "workflow/running/{name}",
-                new Object[] {"version", version},
-                new GenericType<List<String>>() {},
-                workflowName);
+        return getForEntity("workflow/running/{name}", new Object[] { "version", version },
+                new GenericType<List<String>>() {
+                }, workflowName);
     }
 
     /**
-     * Retrieve all workflow instances for a given workflow name between a specific time period
+     * Retrieve all workflow instances for a given workflow name between a specific
+     * time period
      *
-     * @param workflowName the name of the workflow
-     * @param version the version of the workflow definition. Defaults to 1.
-     * @param startTime the start time of the period
-     * @param endTime the end time of the period
-     * @return returns a list of workflows created during the specified during the time period
+     * @param workflowName
+     *            the name of the workflow
+     * @param version
+     *            the version of the workflow definition. Defaults to 1.
+     * @param startTime
+     *            the start time of the period
+     * @param endTime
+     *            the end time of the period
+     * @return returns a list of workflows created during the specified during the
+     *         time period
      */
-    public List<String> getWorkflowsByTimePeriod(
-            String workflowName, int version, Long startTime, Long endTime) {
+    public List<String> getWorkflowsByTimePeriod(String workflowName, int version, Long startTime, Long endTime) {
         Validate.notBlank(workflowName, "Workflow name cannot be blank");
         Validate.notNull(startTime, "Start time cannot be null");
         Validate.notNull(endTime, "End time cannot be null");
 
-        Object[] params =
-                new Object[] {"version", version, "startTime", startTime, "endTime", endTime};
-        return getForEntity(
-                "workflow/running/{name}",
-                params,
-                new GenericType<List<String>>() {},
-                workflowName);
+        Object[] params = new Object[] { "version", version, "startTime", startTime, "endTime", endTime };
+        return getForEntity("workflow/running/{name}", params, new GenericType<List<String>>() {
+        }, workflowName);
     }
 
     /**
      * Starts the decision task for the given workflow instance
      *
-     * @param workflowId the id of the workflow instance
+     * @param workflowId
+     *            the id of the workflow instance
      */
     public void runDecider(String workflowId) {
         Validate.notBlank(workflowId, "workflow id cannot be blank");
@@ -334,7 +323,8 @@ public class WorkflowClient extends ClientBase {
     /**
      * Pause a workflow by workflow id
      *
-     * @param workflowId the workflow id of the workflow to be paused
+     * @param workflowId
+     *            the workflow id of the workflow to be paused
      */
     public void pauseWorkflow(String workflowId) {
         Validate.notBlank(workflowId, "workflow id cannot be blank");
@@ -344,7 +334,8 @@ public class WorkflowClient extends ClientBase {
     /**
      * Resume a paused workflow by workflow id
      *
-     * @param workflowId the workflow id of the paused workflow
+     * @param workflowId
+     *            the workflow id of the paused workflow
      */
     public void resumeWorkflow(String workflowId) {
         Validate.notBlank(workflowId, "workflow id cannot be blank");
@@ -354,58 +345,56 @@ public class WorkflowClient extends ClientBase {
     /**
      * Skips a given task from a current RUNNING workflow
      *
-     * @param workflowId the id of the workflow instance
-     * @param taskReferenceName the reference name of the task to be skipped
+     * @param workflowId
+     *            the id of the workflow instance
+     * @param taskReferenceName
+     *            the reference name of the task to be skipped
      */
     public void skipTaskFromWorkflow(String workflowId, String taskReferenceName) {
         Validate.notBlank(workflowId, "workflow id cannot be blank");
         Validate.notBlank(taskReferenceName, "Task reference name cannot be blank");
 
-        put(
-                "workflow/{workflowId}/skiptask/{taskReferenceName}",
-                null,
-                null,
-                workflowId,
-                taskReferenceName);
+        put("workflow/{workflowId}/skiptask/{taskReferenceName}", null, null, workflowId, taskReferenceName);
     }
 
     /**
      * Reruns the workflow from a specific task
      *
-     * @param workflowId the id of the workflow
-     * @param rerunWorkflowRequest the request containing the task to rerun from
+     * @param workflowId
+     *            the id of the workflow
+     * @param rerunWorkflowRequest
+     *            the request containing the task to rerun from
      * @return the id of the workflow
      */
     public String rerunWorkflow(String workflowId, RerunWorkflowRequest rerunWorkflowRequest) {
         Validate.notBlank(workflowId, "workflow id cannot be blank");
         Validate.notNull(rerunWorkflowRequest, "RerunWorkflowRequest cannot be null");
 
-        return postForEntity(
-                "workflow/{workflowId}/rerun",
-                rerunWorkflowRequest,
-                null,
-                String.class,
-                workflowId);
+        return postForEntity("workflow/{workflowId}/rerun", rerunWorkflowRequest, null, String.class, workflowId);
     }
 
     /**
      * Restart a completed workflow
      *
-     * @param workflowId the workflow id of the workflow to be restarted
-     * @param useLatestDefinitions if true, use the latest workflow and task definitions when
-     *     restarting the workflow if false, use the workflow and task definitions embedded in the
-     *     workflow execution when restarting the workflow
+     * @param workflowId
+     *            the workflow id of the workflow to be restarted
+     * @param useLatestDefinitions
+     *            if true, use the latest workflow and task definitions when
+     *            restarting the workflow if false, use the workflow and task
+     *            definitions embedded in the workflow execution when restarting the
+     *            workflow
      */
     public void restart(String workflowId, boolean useLatestDefinitions) {
         Validate.notBlank(workflowId, "workflow id cannot be blank");
-        Object[] params = new Object[] {"useLatestDefinitions", useLatestDefinitions};
+        Object[] params = new Object[] { "useLatestDefinitions", useLatestDefinitions };
         postForEntity("workflow/{workflowId}/restart", null, params, Void.TYPE, workflowId);
     }
 
     /**
      * Retries the last failed task in a workflow
      *
-     * @param workflowId the workflow id of the workflow with the failed task
+     * @param workflowId
+     *            the workflow id of the workflow with the failed task
      */
     public void retryLastFailedTask(String workflowId) {
         Validate.notBlank(workflowId, "workflow id cannot be blank");
@@ -413,9 +402,11 @@ public class WorkflowClient extends ClientBase {
     }
 
     /**
-     * Resets the callback times of all IN PROGRESS tasks to 0 for the given workflow
+     * Resets the callback times of all IN PROGRESS tasks to 0 for the given
+     * workflow
      *
-     * @param workflowId the id of the workflow
+     * @param workflowId
+     *            the id of the workflow
      */
     public void resetCallbacksForInProgressTasks(String workflowId) {
         Validate.notBlank(workflowId, "workflow id cannot be blank");
@@ -425,74 +416,86 @@ public class WorkflowClient extends ClientBase {
     /**
      * Terminates the execution of the given workflow instance
      *
-     * @param workflowId the id of the workflow to be terminated
-     * @param reason the reason to be logged and displayed
-     * @param triggerFailureWorkflow whether to trigger the failure workflow (if any) as a result of
-     *     this termination
+     * @param workflowId
+     *            the id of the workflow to be terminated
+     * @param reason
+     *            the reason to be logged and displayed
+     * @param triggerFailureWorkflow
+     *            whether to trigger the failure workflow (if any) as a result of
+     *            this termination
      */
     public void terminateWorkflow(String workflowId, String reason, boolean triggerFailureWorkflow) {
         Validate.notBlank(workflowId, "workflow id cannot be blank");
-        deleteWithUriVariables(
-                new Object[] {"reason", reason, "triggerFailureWorkflow", triggerFailureWorkflow}, "workflow/{workflowId}", workflowId);
+        deleteWithUriVariables(new Object[] { "reason", reason, "triggerFailureWorkflow", triggerFailureWorkflow },
+                "workflow/{workflowId}", workflowId);
     }
 
     /**
      * Search for workflows based on payload
      *
-     * @param query the search query
-     * @return the {@link SearchResult} containing the {@link WorkflowSummary} that match the query
+     * @param query
+     *            the search query
+     * @return the {@link SearchResult} containing the {@link WorkflowSummary} that
+     *         match the query
      */
     public SearchResult<WorkflowSummary> search(String query) {
-        return getForEntity(
-                "workflow/search", new Object[] {"query", query}, searchResultWorkflowSummary);
+        return getForEntity("workflow/search", new Object[] { "query", query }, searchResultWorkflowSummary);
     }
 
     /**
      * Search for workflows based on payload
      *
-     * @param query the search query
-     * @return the {@link SearchResult} containing the {@link Workflow} that match the query
+     * @param query
+     *            the search query
+     * @return the {@link SearchResult} containing the {@link Workflow} that match
+     *         the query
      */
     public SearchResult<Workflow> searchV2(String query) {
-        return getForEntity(
-                "workflow/search-v2", new Object[] {"query", query}, searchResultWorkflow);
+        return getForEntity("workflow/search-v2", new Object[] { "query", query }, searchResultWorkflow);
     }
 
     /**
      * Paginated search for workflows based on payload
      *
-     * @param start start value of page
-     * @param size number of workflows to be returned
-     * @param sort sort order
-     * @param freeText additional free text query
-     * @param query the search query
-     * @return the {@link SearchResult} containing the {@link WorkflowSummary} that match the query
+     * @param start
+     *            start value of page
+     * @param size
+     *            number of workflows to be returned
+     * @param sort
+     *            sort order
+     * @param freeText
+     *            additional free text query
+     * @param query
+     *            the search query
+     * @return the {@link SearchResult} containing the {@link WorkflowSummary} that
+     *         match the query
      */
-    public SearchResult<WorkflowSummary> search(
-            Integer start, Integer size, String sort, String freeText, String query) {
-        Object[] params =
-                new Object[] {
-                    "start", start, "size", size, "sort", sort, "freeText", freeText, "query", query
-                };
+    public SearchResult<WorkflowSummary> search(Integer start, Integer size, String sort, String freeText,
+            String query) {
+        Object[] params = new Object[] { "start", start, "size", size, "sort", sort, "freeText", freeText, "query",
+                query };
         return getForEntity("workflow/search", params, searchResultWorkflowSummary);
     }
 
     /**
      * Paginated search for workflows based on payload
      *
-     * @param start start value of page
-     * @param size number of workflows to be returned
-     * @param sort sort order
-     * @param freeText additional free text query
-     * @param query the search query
-     * @return the {@link SearchResult} containing the {@link Workflow} that match the query
+     * @param start
+     *            start value of page
+     * @param size
+     *            number of workflows to be returned
+     * @param sort
+     *            sort order
+     * @param freeText
+     *            additional free text query
+     * @param query
+     *            the search query
+     * @return the {@link SearchResult} containing the {@link Workflow} that match
+     *         the query
      */
-    public SearchResult<Workflow> searchV2(
-            Integer start, Integer size, String sort, String freeText, String query) {
-        Object[] params =
-                new Object[] {
-                    "start", start, "size", size, "sort", sort, "freeText", freeText, "query", query
-                };
+    public SearchResult<Workflow> searchV2(Integer start, Integer size, String sort, String freeText, String query) {
+        Object[] params = new Object[] { "start", start, "size", size, "sort", sort, "freeText", freeText, "query",
+                query };
         return getForEntity("workflow/search-v2", params, searchResultWorkflow);
     }
 

@@ -43,8 +43,8 @@ public abstract class AbstractWorkflowTests {
 
     protected static ObjectMapper objectMapper = new ObjectMapperProvider().getObjectMapper();
 
-    protected static TypeReference<Map<String, List<WorkflowTestRequest.TaskMock>>> mockType =
-            new TypeReference<Map<String, List<WorkflowTestRequest.TaskMock>>>() {};
+    protected static TypeReference<Map<String, List<WorkflowTestRequest.TaskMock>>> mockType = new TypeReference<Map<String, List<WorkflowTestRequest.TaskMock>>>() {
+    };
 
     protected MetadataClient metadataClient;
 
@@ -85,23 +85,16 @@ public abstract class AbstractWorkflowTests {
                 if (inlineSubWorkflowDefObj != null) {
                     // If not null, it represents WorkflowDef object
                     WorkflowDef inlineSubWorkflowDef = (WorkflowDef) inlineSubWorkflowDefObj;
-                    WorkflowTestRequest subWorkflowTestRequest =
-                            getWorkflowTestRequest(inlineSubWorkflowDef);
-                    testRequest
-                            .getSubWorkflowTestRequest()
-                            .put(task.getTaskReferenceName(), subWorkflowTestRequest);
+                    WorkflowTestRequest subWorkflowTestRequest = getWorkflowTestRequest(inlineSubWorkflowDef);
+                    testRequest.getSubWorkflowTestRequest().put(task.getTaskReferenceName(), subWorkflowTestRequest);
                 } else {
                     // Inline definition is null
                     String subWorkflowName = task.getSubWorkflowParam().getName();
                     // Load up the sub workflow from the JSON
-                    WorkflowDef subWorkflowDef =
-                            getWorkflowDef("/workflows/" + subWorkflowName + ".json");
+                    WorkflowDef subWorkflowDef = getWorkflowDef("/workflows/" + subWorkflowName + ".json");
                     assertNotNull(subWorkflowDef);
-                    WorkflowTestRequest subWorkflowTestRequest =
-                            getWorkflowTestRequest(subWorkflowDef);
-                    testRequest
-                            .getSubWorkflowTestRequest()
-                            .put(task.getTaskReferenceName(), subWorkflowTestRequest);
+                    WorkflowTestRequest subWorkflowTestRequest = getWorkflowTestRequest(subWorkflowDef);
+                    testRequest.getSubWorkflowTestRequest().put(task.getTaskReferenceName(), subWorkflowTestRequest);
                 }
             }
         }
@@ -125,8 +118,7 @@ public abstract class AbstractWorkflowTests {
         return objectMapper.readValue(new InputStreamReader(inputStream), Workflow.class);
     }
 
-    protected Map<String, List<WorkflowTestRequest.TaskMock>> getTestInputs(String path)
-            throws IOException {
+    protected Map<String, List<WorkflowTestRequest.TaskMock>> getTestInputs(String path) throws IOException {
         InputStream inputStream = AbstractWorkflowTests.class.getResourceAsStream(path);
         if (inputStream == null) {
             throw new IOException("No file found at " + path);

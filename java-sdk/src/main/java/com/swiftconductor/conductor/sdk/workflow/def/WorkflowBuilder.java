@@ -19,13 +19,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swiftconductor.conductor.common.metadata.workflow.WorkflowDef;
 import com.swiftconductor.conductor.common.metadata.workflow.WorkflowTask;
 import com.swiftconductor.conductor.sdk.workflow.def.tasks.*;
-import com.swiftconductor.conductor.sdk.workflow.executor.WorkflowExecutor;
 import com.swiftconductor.conductor.sdk.workflow.utils.InputOutputGetter;
 import com.swiftconductor.conductor.sdk.workflow.utils.MapBuilder;
 import com.swiftconductor.conductor.sdk.workflow.utils.ObjectMapperProvider;
 
 /**
- * @param <T> Input type for the workflow
+ * @param <T>
+ *            Input type for the workflow
  */
 public class WorkflowBuilder<T> {
 
@@ -53,15 +53,11 @@ public class WorkflowBuilder<T> {
 
     protected List<Task<?>> tasks = new ArrayList<>();
 
-    private WorkflowExecutor workflowExecutor;
-
-    public final InputOutputGetter input =
-            new InputOutputGetter("workflow", InputOutputGetter.Field.input);
+    public final InputOutputGetter input = new InputOutputGetter("workflow", InputOutputGetter.Field.input);
 
     private final ObjectMapper objectMapper = new ObjectMapperProvider().getObjectMapper();
 
-    public WorkflowBuilder(WorkflowExecutor workflowExecutor) {
-        this.workflowExecutor = workflowExecutor;
+    public WorkflowBuilder() {
         this.tasks = new ArrayList<>();
     }
 
@@ -90,8 +86,7 @@ public class WorkflowBuilder<T> {
         return this;
     }
 
-    public WorkflowBuilder<T> timeoutPolicy(
-            WorkflowDef.TimeoutPolicy timeoutPolicy, long timeoutSeconds) {
+    public WorkflowBuilder<T> timeoutPolicy(WorkflowDef.TimeoutPolicy timeoutPolicy, long timeoutSeconds) {
         this.timeoutPolicy = timeoutPolicy;
         this.timeoutSeconds = timeoutSeconds;
         return this;
@@ -117,8 +112,7 @@ public class WorkflowBuilder<T> {
             this.state = objectMapper.convertValue(variables, Map.class);
         } catch (Exception e) {
             throw new IllegalArgumentException(
-                    "Workflow Variables cannot be converted to Map.  Supplied: "
-                            + variables.getClass().getName());
+                    "Workflow Variables cannot be converted to Map.  Supplied: " + variables.getClass().getName());
         }
         return this;
     }
@@ -152,7 +146,7 @@ public class WorkflowBuilder<T> {
 
         validate();
 
-        ConductorWorkflow<T> workflow = new ConductorWorkflow<T>(workflowExecutor);
+        ConductorWorkflow<T> workflow = new ConductorWorkflow<T>();
         if (description != null) {
             workflow.setDescription(description);
         }
@@ -177,8 +171,8 @@ public class WorkflowBuilder<T> {
     }
 
     /**
-     * Validate: 1. There are no tasks with duplicate reference names 2. Each of the task is
-     * consistent with its definition 3.
+     * Validate: 1. There are no tasks with duplicate reference names 2. Each of the
+     * task is consistent with its definition 3.
      */
     private void validate() throws ValidationError {
 
@@ -200,10 +194,8 @@ public class WorkflowBuilder<T> {
             }
         }
         if (!duplicateTasks.isEmpty()) {
-            throw new ValidationError(
-                    "Task Reference Names MUST be unique across all the tasks in the workkflow.  "
-                            + "Please update/change reference names to be unique for the following tasks: "
-                            + duplicateTasks);
+            throw new ValidationError("Task Reference Names MUST be unique across all the tasks in the workkflow.  "
+                    + "Please update/change reference names to be unique for the following tasks: " + duplicateTasks);
         }
     }
 }

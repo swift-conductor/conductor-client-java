@@ -14,24 +14,24 @@
 package com.swiftconductor.conductor.sdk.testing;
 
 import com.swiftconductor.conductor.client.http.TaskClient;
-import com.swiftconductor.conductor.sdk.workflow.executor.WorkflowExecutor;
-import com.swiftconductor.conductor.sdk.workflow.executor.task.AnnotatedWorkerExecutor;
+import com.swiftconductor.conductor.sdk.worker.AnnotatedWorkerHost;
+import com.swiftconductor.conductor.sdk.workflow.WorkflowManager;
 
 public class WorkflowTestRunner {
 
     private LocalServerRunner localServerRunner;
 
-    private final AnnotatedWorkerExecutor annotatedWorkerExecutor;
+    private final AnnotatedWorkerHost annotatedWorkerHost;
 
-    private final WorkflowExecutor workflowExecutor;
+    private final WorkflowManager workflowManager;
 
     public WorkflowTestRunner(String serverApiUrl) {
 
         TaskClient taskClient = new TaskClient();
         taskClient.setRootURI(serverApiUrl);
-        this.annotatedWorkerExecutor = new AnnotatedWorkerExecutor(taskClient);
+        this.annotatedWorkerHost = new AnnotatedWorkerHost(taskClient);
 
-        this.workflowExecutor = new WorkflowExecutor(serverApiUrl);
+        this.workflowManager = new WorkflowManager(serverApiUrl);
     }
 
     public WorkflowTestRunner(int port, String conductorVersion) {
@@ -40,25 +40,25 @@ public class WorkflowTestRunner {
 
         TaskClient taskClient = new TaskClient();
         taskClient.setRootURI(localServerRunner.getServerAPIUrl());
-        this.annotatedWorkerExecutor = new AnnotatedWorkerExecutor(taskClient);
+        this.annotatedWorkerHost = new AnnotatedWorkerHost(taskClient);
 
-        this.workflowExecutor = new WorkflowExecutor(localServerRunner.getServerAPIUrl());
+        this.workflowManager = new WorkflowManager(localServerRunner.getServerAPIUrl());
     }
 
-    public WorkflowExecutor getWorkflowExecutor() {
-        return workflowExecutor;
+    public WorkflowManager getWorkflowManager() {
+        return workflowManager;
     }
 
     public void init(String basePackages) {
         if (localServerRunner != null) {
             localServerRunner.startLocalServer();
         }
-        annotatedWorkerExecutor.initWorkers(basePackages);
+        annotatedWorkerHost.initWorkers(basePackages);
     }
 
     public void shutdown() {
         localServerRunner.shutdown();
-        annotatedWorkerExecutor.shutdown();
-        workflowExecutor.shutdown();
+        annotatedWorkerHost.shutdown();
+        workflowManager.shutdown();
     }
 }

@@ -33,8 +33,7 @@ import com.swiftconductor.conductor.common.model.BulkResponse;
 public class ClientRequestHandler {
     private final Client client;
 
-    public ClientRequestHandler(
-            ClientConfig config, ClientHandler handler, ClientFilter... filters) {
+    public ClientRequestHandler(ClientConfig config, ClientHandler handler, ClientFilter... filters) {
         ObjectMapper objectMapper = new ObjectMapperProvider().getObjectMapper();
 
         // https://github.com/FasterXML/jackson-databind/issues/2683
@@ -58,9 +57,7 @@ public class ClientRequestHandler {
 
     public BulkResponse delete(URI uri, Object body) {
         if (body != null) {
-            return client.resource(uri)
-                    .type(MediaType.APPLICATION_JSON_TYPE)
-                    .delete(BulkResponse.class, body);
+            return client.resource(uri).type(MediaType.APPLICATION_JSON_TYPE).delete(BulkResponse.class, body);
         } else {
             client.resource(uri).delete();
         }
@@ -68,16 +65,12 @@ public class ClientRequestHandler {
     }
 
     public ClientResponse get(URI uri) {
-        return client.resource(uri)
-                .accept(MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN)
-                .get(ClientResponse.class);
+        return client.resource(uri).accept(MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN).get(ClientResponse.class);
     }
 
     public WebResource.Builder getWebResourceBuilder(URI URI, Object entity) {
-        return client.resource(URI)
-                .type(MediaType.APPLICATION_JSON)
-                .entity(entity)
-                .accept(MediaType.TEXT_PLAIN, MediaType.APPLICATION_JSON);
+        return client.resource(URI).type(MediaType.APPLICATION_JSON).entity(entity).accept(MediaType.TEXT_PLAIN,
+                MediaType.APPLICATION_JSON);
     }
 
     private boolean isNewerJacksonVersion() {

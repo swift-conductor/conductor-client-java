@@ -44,15 +44,11 @@ public class Terminate extends Task<Terminate> {
      * @param terminationStatus
      * @param reason
      */
-    public Terminate(
-            String taskReferenceName, Workflow.WorkflowStatus terminationStatus, String reason) {
+    public Terminate(String taskReferenceName, Workflow.WorkflowStatus terminationStatus, String reason) {
         this(taskReferenceName, terminationStatus, reason, new HashMap<>());
     }
 
-    public Terminate(
-            String taskReferenceName,
-            Workflow.WorkflowStatus terminationStatus,
-            String reason,
+    public Terminate(String taskReferenceName, Workflow.WorkflowStatus terminationStatus, String reason,
             Object workflowOutput) {
         super(taskReferenceName, TaskType.TERMINATE);
 

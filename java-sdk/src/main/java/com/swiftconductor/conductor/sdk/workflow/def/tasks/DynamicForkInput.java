@@ -22,8 +22,8 @@ public class DynamicForkInput {
     private List<Task<?>> tasks;
 
     /**
-     * Input to the tasks. Key is the reference name of the task and value is an Object that is sent
-     * as input to the task
+     * Input to the tasks. Key is the reference name of the task and value is an
+     * Object that is sent as input to the task
      */
     private Map<String, Object> inputs;
 
@@ -32,7 +32,8 @@ public class DynamicForkInput {
         this.inputs = inputs;
     }
 
-    public DynamicForkInput() {}
+    public DynamicForkInput() {
+    }
 
     public List<Task<?>> getTasks() {
         return tasks;

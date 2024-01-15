@@ -31,19 +31,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * This test demonstrates how to use execution data from the previous executed workflows as golden
- * input and output and use them to regression test the workflow definition.
+ * This test demonstrates how to use execution data from the previous executed
+ * workflows as golden input and output and use them to regression test the
+ * workflow definition.
  *
- * <p>Regression tests are useful ensuring any changes to the workflow definition does not change
- * the behavior.
+ * <p>
+ * Regression tests are useful ensuring any changes to the workflow definition
+ * does not change the behavior.
  */
 public class RegressionTest extends AbstractWorkflowTests {
 
     // @Test
     // Tests are commented out since it requires a running server
-    // Uses a previously executed successful run to verify the workflow execution, and it's output.
-    public void verifyWorkflowOutput()
-            throws IOException, ExecutionException, InterruptedException, TimeoutException {
+    // Uses a previously executed successful run to verify the workflow execution,
+    // and it's output.
+    public void verifyWorkflowOutput() throws IOException, ExecutionException, InterruptedException, TimeoutException {
         // Workflow Definition
         WorkflowDef def = getWorkflowDef("/workflows/workflow1.json");
 

@@ -28,24 +28,21 @@ public class HealthCheckClient {
 
     public HealthCheckClient(String healthCheckURL) {
         this.healthCheckURL = healthCheckURL;
-        this.objectMapper =
-                new ObjectMapper()
-                        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        this.objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     public boolean isServerRunning() {
         try {
 
-            BufferedReader in =
-                    new BufferedReader(new InputStreamReader(new URL(healthCheckURL).openStream()));
+            BufferedReader in = new BufferedReader(new InputStreamReader(new URL(healthCheckURL).openStream()));
             StringBuilder response = new StringBuilder();
             String inputLine;
             while ((inputLine = in.readLine()) != null) {
                 response.append(inputLine);
             }
             in.close();
-            HealthCheckResults healthCheckResults =
-                    objectMapper.readValue(response.toString(), HealthCheckResults.class);
+            HealthCheckResults healthCheckResults = objectMapper.readValue(response.toString(),
+                    HealthCheckResults.class);
             return healthCheckResults.healthy;
         } catch (Throwable t) {
             return false;

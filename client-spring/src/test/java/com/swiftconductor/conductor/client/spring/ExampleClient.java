@@ -17,7 +17,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import com.swiftconductor.conductor.client.worker.Worker;
+import com.swiftconductor.conductor.client.worker.AbstractWorker;
 import com.swiftconductor.conductor.common.metadata.tasks.Task;
 import com.swiftconductor.conductor.common.metadata.tasks.TaskResult;
 
@@ -30,8 +30,8 @@ public class ExampleClient {
     }
 
     @Bean
-    public Worker worker() {
-        return new Worker() {
+    public AbstractWorker worker() {
+        return new AbstractWorker() {
             @Override
             public String getTaskDefName() {
                 return "taskDef";

@@ -16,15 +16,15 @@ package com.swiftconductor.conductor.sdk.workflow.def;
 import org.junit.jupiter.api.Test;
 
 import com.swiftconductor.conductor.common.metadata.workflow.WorkflowTask;
+import com.swiftconductor.conductor.sdk.workflow.WorkflowManager;
 import com.swiftconductor.conductor.sdk.workflow.def.tasks.*;
-import com.swiftconductor.conductor.sdk.workflow.executor.WorkflowExecutor;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class WorkflowDefTaskTests {
 
     static {
-        WorkflowExecutor.initTaskImplementations();
+        WorkflowManager.initTaskImplementations();
     }
 
     @Test

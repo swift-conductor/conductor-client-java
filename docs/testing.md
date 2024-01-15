@@ -27,10 +27,10 @@ JUnit, Spock and other testing frameworks being used.
 testRunner = new WorkflowTestRunner(8096, "3.16.0-SNAPSHOT");
 
 // Scan the packages for task workers
-testRunner.init("com.swiftconductor.conductor.testing.workflows");
+testRunner.init("com.swiftconductor.conductor.testing.workers");
 
-//Get the executor instance used for  loading workflows 
-executor = testRunner.getWorkflowExecutor();
+//Get the manager instance used for  loading workflows 
+manager = testRunner.getWorkflowManager();
 ```
 
 Clean up method:
@@ -45,8 +45,8 @@ testRunner.shutdown();
 Loading workflows from JSON files for testing:
 
 ```java
-executor.loadTaskDefs("/tasks.json");
-executor.loadWorkflowDefs("/simple_workflow.json");
+manager.loadTaskDefs("/tasks.json");
+manager.loadWorkflowDef("/simple_workflow.json", true);
 ```
 
 ## Sample test code that starts a workflow and verifies its execution
@@ -58,9 +58,9 @@ getQuote.setAmount(1000000.0);
 getQuote.setZipCode("10121");
 
 // Start the workflow and wait for it to complete
-CompletableFuture<Workflow> workflowFuture = executor.executeWorkflow("InsuranceQuoteWorkflow", 1, getQuote);
+CompletableFuture<Workflow> workflowFuture = manager.startWorkflow("InsuranceQuoteWorkflow", 1, getQuote);
 
-//Wait for the workflow execution to complete
+// Wait for the workflow execution to complete
 Workflow workflow = workflowFuture.get();
 
 //Assertions

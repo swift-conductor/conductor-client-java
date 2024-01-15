@@ -18,8 +18,8 @@ import com.swiftconductor.conductor.common.metadata.tasks.TaskType;
 import com.swiftconductor.conductor.common.metadata.workflow.WorkflowTask;
 
 /**
- * JQ Transformation task See https://stedolan.github.io/jq/ for how to form the queries to parse
- * JSON payloads
+ * JQ Transformation task See https://stedolan.github.io/jq/ for how to form the
+ * queries to parse JSON payloads
  */
 public class JQ extends Task<JQ> {
 

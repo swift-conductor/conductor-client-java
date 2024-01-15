@@ -25,15 +25,15 @@ import org.junit.jupiter.api.Test;
 
 import com.swiftconductor.conductor.common.metadata.workflow.WorkflowTask;
 import com.swiftconductor.conductor.common.run.Workflow;
+import com.swiftconductor.conductor.sdk.workflow.WorkflowManager;
 import com.swiftconductor.conductor.sdk.workflow.def.tasks.*;
-import com.swiftconductor.conductor.sdk.workflow.executor.WorkflowExecutor;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TaskConversionsTests {
 
     static {
-        WorkflowExecutor.initTaskImplementations();
+        WorkflowManager.initTaskImplementations();
     }
 
     @Test
@@ -89,8 +89,7 @@ public class TaskConversionsTests {
         CustomTask task2 = new CustomTask("task2", "task2");
         CustomTask task3 = new CustomTask("task3", "task3");
 
-        ForkJoin forkTask =
-                new ForkJoin("task_ref_name", new Task[] {task1}, new Task[] {task2, task3});
+        ForkJoin forkTask = new ForkJoin("task_ref_name", new Task[] { task1 }, new Task[] { task2, task3 });
 
         WorkflowTask workflowTask = forkTask.getWorkflowDefTasks().get(0);
         assertNotNull(workflowTask.getForkTasks());
@@ -106,23 +105,17 @@ public class TaskConversionsTests {
         assertEquals(forkTask.getType(), taskFromWorkflowTask.getType());
         assertEquals(forkTask.getInput(), taskFromWorkflowTask.getInput());
 
-        assertEquals(
-                forkTask.getForkedTasks().length, taskFromWorkflowTask.getForkedTasks().length);
+        assertEquals(forkTask.getForkedTasks().length, taskFromWorkflowTask.getForkedTasks().length);
         for (int i = 0; i < forkTask.getForkedTasks().length; i++) {
-            assertEquals(
-                    forkTask.getForkedTasks()[i].length,
-                    taskFromWorkflowTask.getForkedTasks()[i].length);
+            assertEquals(forkTask.getForkedTasks()[i].length, taskFromWorkflowTask.getForkedTasks()[i].length);
             for (int j = 0; j < forkTask.getForkedTasks()[i].length; j++) {
-                assertEquals(
-                        forkTask.getForkedTasks()[i][j].getTaskReferenceName(),
+                assertEquals(forkTask.getForkedTasks()[i][j].getTaskReferenceName(),
                         taskFromWorkflowTask.getForkedTasks()[i][j].getTaskReferenceName());
 
-                assertEquals(
-                        forkTask.getForkedTasks()[i][j].getName(),
+                assertEquals(forkTask.getForkedTasks()[i][j].getName(),
                         taskFromWorkflowTask.getForkedTasks()[i][j].getName());
 
-                assertEquals(
-                        forkTask.getForkedTasks()[i][j].getType(),
+                assertEquals(forkTask.getForkedTasks()[i][j].getType(),
                         taskFromWorkflowTask.getForkedTasks()[i][j].getType());
             }
         }
@@ -145,11 +138,8 @@ public class TaskConversionsTests {
         assertEquals(dynamicTask.getType(), taskFromWorkflowTask.getType());
         assertEquals(dynamicTask.getStartDelay(), taskFromWorkflowTask.getStartDelay());
         assertEquals(dynamicTask.getInput(), taskFromWorkflowTask.getInput());
-        assertEquals(
-                dynamicTask.getForkTasksParameter(), taskFromWorkflowTask.getForkTasksParameter());
-        assertEquals(
-                dynamicTask.getForkTasksInputsParameter(),
-                taskFromWorkflowTask.getForkTasksInputsParameter());
+        assertEquals(dynamicTask.getForkTasksParameter(), taskFromWorkflowTask.getForkTasksParameter());
+        assertEquals(dynamicTask.getForkTasksInputsParameter(), taskFromWorkflowTask.getForkTasksInputsParameter());
     }
 
     @Test
@@ -175,13 +165,9 @@ public class TaskConversionsTests {
 
         assertEquals(doWhileTask.getLoopCondition(), taskFromWorkflowTask.getLoopCondition());
         assertEquals(
-                doWhileTask.getLoopTasks().stream()
-                        .map(task -> task.getTaskReferenceName())
-                        .sorted()
+                doWhileTask.getLoopTasks().stream().map(task -> task.getTaskReferenceName()).sorted()
                         .collect(Collectors.toSet()),
-                taskFromWorkflowTask.getLoopTasks().stream()
-                        .map(task -> task.getTaskReferenceName())
-                        .sorted()
+                taskFromWorkflowTask.getLoopTasks().stream().map(task -> task.getTaskReferenceName()).sorted()
                         .collect(Collectors.toSet()));
     }
 
@@ -196,8 +182,7 @@ public class TaskConversionsTests {
         assertTrue(!workflowTask.getJoinOn().isEmpty());
 
         Task fromWorkflowTask = TaskRegistry.getTask(workflowTask);
-        assertTrue(
-                fromWorkflowTask instanceof Join,
+        assertTrue(fromWorkflowTask instanceof Join,
                 "task is not of type Join, but of type " + fromWorkflowTask.getClass().getName());
         Join taskFromWorkflowTask = (Join) fromWorkflowTask;
 
@@ -209,11 +194,8 @@ public class TaskConversionsTests {
         assertEquals(joinTask.getInput(), taskFromWorkflowTask.getInput());
 
         assertEquals(joinTask.getJoinOn().length, taskFromWorkflowTask.getJoinOn().length);
-        assertEquals(
-                Arrays.asList(joinTask.getJoinOn()).stream().sorted().collect(Collectors.toSet()),
-                Arrays.asList(taskFromWorkflowTask.getJoinOn()).stream()
-                        .sorted()
-                        .collect(Collectors.toSet()));
+        assertEquals(Arrays.asList(joinTask.getJoinOn()).stream().sorted().collect(Collectors.toSet()),
+                Arrays.asList(taskFromWorkflowTask.getJoinOn()).stream().sorted().collect(Collectors.toSet()));
     }
 
     @Test
@@ -225,8 +207,7 @@ public class TaskConversionsTests {
         assertNotNull(workflowTask.getInputParameters());
 
         Task fromWorkflowTask = TaskRegistry.getTask(workflowTask);
-        assertTrue(
-                fromWorkflowTask instanceof Event,
+        assertTrue(fromWorkflowTask instanceof Event,
                 "task is not of type Event, but of type " + fromWorkflowTask.getClass().getName());
         Event taskFromWorkflowTask = (Event) fromWorkflowTask;
 
@@ -248,16 +229,13 @@ public class TaskConversionsTests {
         assertNotNull(workflowTask.getInputParameters());
 
         Task fromWorkflowTask = TaskRegistry.getTask(workflowTask);
-        assertTrue(
-                fromWorkflowTask instanceof SetVariable,
-                "task is not of type SetVariable, but of type "
-                        + fromWorkflowTask.getClass().getName());
+        assertTrue(fromWorkflowTask instanceof SetVariable,
+                "task is not of type SetVariable, but of type " + fromWorkflowTask.getClass().getName());
         SetVariable taskFromWorkflowTask = (SetVariable) fromWorkflowTask;
 
         assertNotNull(fromWorkflowTask);
         assertEquals(setVariableTask.getName(), fromWorkflowTask.getName());
-        assertEquals(
-                setVariableTask.getTaskReferenceName(), fromWorkflowTask.getTaskReferenceName());
+        assertEquals(setVariableTask.getTaskReferenceName(), fromWorkflowTask.getTaskReferenceName());
         assertEquals(setVariableTask.getType(), taskFromWorkflowTask.getType());
         assertEquals(setVariableTask.getStartDelay(), taskFromWorkflowTask.getStartDelay());
         assertEquals(setVariableTask.getInput(), taskFromWorkflowTask.getInput());
@@ -272,22 +250,18 @@ public class TaskConversionsTests {
         assertNotNull(workflowTask.getInputParameters());
 
         Task fromWorkflowTask = TaskRegistry.getTask(workflowTask);
-        assertTrue(
-                fromWorkflowTask instanceof SubWorkflow,
-                "task is not of type SubWorkflow, but of type "
-                        + fromWorkflowTask.getClass().getName());
+        assertTrue(fromWorkflowTask instanceof SubWorkflow,
+                "task is not of type SubWorkflow, but of type " + fromWorkflowTask.getClass().getName());
         SubWorkflow taskFromWorkflowTask = (SubWorkflow) fromWorkflowTask;
 
         assertNotNull(fromWorkflowTask);
         assertEquals(subWorkflowTask.getName(), fromWorkflowTask.getName());
-        assertEquals(
-                subWorkflowTask.getTaskReferenceName(), fromWorkflowTask.getTaskReferenceName());
+        assertEquals(subWorkflowTask.getTaskReferenceName(), fromWorkflowTask.getTaskReferenceName());
         assertEquals(subWorkflowTask.getType(), taskFromWorkflowTask.getType());
         assertEquals(subWorkflowTask.getStartDelay(), taskFromWorkflowTask.getStartDelay());
         assertEquals(subWorkflowTask.getInput(), taskFromWorkflowTask.getInput());
         assertEquals(subWorkflowTask.getWorkflowName(), taskFromWorkflowTask.getWorkflowName());
-        assertEquals(
-                subWorkflowTask.getWorkflowVersion(), taskFromWorkflowTask.getWorkflowVersion());
+        assertEquals(subWorkflowTask.getWorkflowVersion(), taskFromWorkflowTask.getWorkflowVersion());
     }
 
     @Test
@@ -301,15 +275,13 @@ public class TaskConversionsTests {
         decision.switchCase("caseA", task1);
         decision.switchCase("caseB", task2, task3);
 
-        decision.defaultCase(
-                new Terminate("terminate", Workflow.WorkflowStatus.FAILED, "", new HashMap<>()));
+        decision.defaultCase(new Terminate("terminate", Workflow.WorkflowStatus.FAILED, "", new HashMap<>()));
 
         WorkflowTask workflowTask = decision.getWorkflowDefTasks().get(0);
         assertNotNull(workflowTask.getInputParameters());
 
         Task fromWorkflowTask = TaskRegistry.getTask(workflowTask);
-        assertTrue(
-                fromWorkflowTask instanceof Switch,
+        assertTrue(fromWorkflowTask instanceof Switch,
                 "task is not of type Switch, but of type " + fromWorkflowTask.getClass().getName());
         Switch taskFromWorkflowTask = (Switch) fromWorkflowTask;
 
@@ -323,18 +295,10 @@ public class TaskConversionsTests {
         assertEquals(decision.getBranches().keySet(), taskFromWorkflowTask.getBranches().keySet());
         assertEquals(
                 decision.getBranches().values().stream()
-                        .map(
-                                tasks ->
-                                        tasks.stream()
-                                                .map(Task::getTaskReferenceName)
-                                                .collect(Collectors.toSet()))
+                        .map(tasks -> tasks.stream().map(Task::getTaskReferenceName).collect(Collectors.toSet()))
                         .collect(Collectors.toSet()),
                 taskFromWorkflowTask.getBranches().values().stream()
-                        .map(
-                                tasks ->
-                                        tasks.stream()
-                                                .map(Task::getTaskReferenceName)
-                                                .collect(Collectors.toSet()))
+                        .map(tasks -> tasks.stream().map(Task::getTaskReferenceName).collect(Collectors.toSet()))
                         .collect(Collectors.toSet()));
         assertEquals(decision.getBranches().size(), taskFromWorkflowTask.getBranches().size());
     }
@@ -342,17 +306,14 @@ public class TaskConversionsTests {
     @Test
     public void testTerminateConversion() {
 
-        Terminate terminateTask =
-                new Terminate("terminate", Workflow.WorkflowStatus.FAILED, "", new HashMap<>());
+        Terminate terminateTask = new Terminate("terminate", Workflow.WorkflowStatus.FAILED, "", new HashMap<>());
 
         WorkflowTask workflowTask = terminateTask.getWorkflowDefTasks().get(0);
         assertNotNull(workflowTask.getInputParameters());
 
         Task fromWorkflowTask = TaskRegistry.getTask(workflowTask);
-        assertTrue(
-                fromWorkflowTask instanceof Terminate,
-                "task is not of type Terminate, but of type "
-                        + fromWorkflowTask.getClass().getName());
+        assertTrue(fromWorkflowTask instanceof Terminate,
+                "task is not of type Terminate, but of type " + fromWorkflowTask.getClass().getName());
         Terminate taskFromWorkflowTask = (Terminate) fromWorkflowTask;
 
         assertNotNull(fromWorkflowTask);
@@ -372,8 +333,7 @@ public class TaskConversionsTests {
         assertNotNull(workflowTask.getInputParameters());
 
         Task fromWorkflowTask = TaskRegistry.getTask(workflowTask);
-        assertTrue(
-                fromWorkflowTask instanceof Wait,
+        assertTrue(fromWorkflowTask instanceof Wait,
                 "task is not of type Wait, but of type " + fromWorkflowTask.getClass().getName());
         Wait taskFromWorkflowTask = (Wait) fromWorkflowTask;
 
@@ -424,8 +384,7 @@ public class TaskConversionsTests {
         assertNotNull(workflowTask.getInputParameters());
 
         Task fromWorkflowTask = TaskRegistry.getTask(workflowTask);
-        assertTrue(
-                fromWorkflowTask instanceof Http,
+        assertTrue(fromWorkflowTask instanceof Http,
                 "task is not of type Http, but of type " + fromWorkflowTask.getClass().getName());
         Http taskFromWorkflowTask = (Http) fromWorkflowTask;
 
@@ -471,10 +430,8 @@ public class TaskConversionsTests {
     @Test
     public void testInlineTaskConversion() {
 
-        Javascript inlineTask =
-                new Javascript(
-                        "task_name",
-                        "function e() { if ($.value == 1){return {\"result\": true}} else { return {\"result\": false}}} e();");
+        Javascript inlineTask = new Javascript("task_name",
+                "function e() { if ($.value == 1){return {\"result\": true}} else { return {\"result\": false}}} e();");
         inlineTask.validate();
 
         Map<String, Object> map = new HashMap<>();
@@ -489,8 +446,7 @@ public class TaskConversionsTests {
         WorkflowTask workflowTask = inlineTask.getWorkflowDefTasks().get(0);
 
         Task fromWorkflowTask = TaskRegistry.getTask(workflowTask);
-        assertTrue(
-                fromWorkflowTask instanceof Javascript, "Found the instance " + fromWorkflowTask);
+        assertTrue(fromWorkflowTask instanceof Javascript, "Found the instance " + fromWorkflowTask);
         Javascript taskFromWorkflowTask = (Javascript) fromWorkflowTask;
 
         assertNotNull(fromWorkflowTask);
@@ -504,10 +460,8 @@ public class TaskConversionsTests {
     @Test
     public void testJavascriptValidation() {
         // This script has errors
-        Javascript inlineTask =
-                new Javascript(
-                        "task_name",
-                        "function e() { if ($.value ==> 1){return {\"result\": true}} else { return {\"result\": false}}} e();");
+        Javascript inlineTask = new Javascript("task_name",
+                "function e() { if ($.value ==> 1){return {\"result\": true}} else { return {\"result\": false}}} e();");
         boolean failed = false;
         try {
             inlineTask.validate();
@@ -518,10 +472,8 @@ public class TaskConversionsTests {
         assertTrue(failed);
 
         // This script does NOT have errors
-        inlineTask =
-                new Javascript(
-                        "task_name",
-                        "function e() { if ($.value == 1){return {\"result\": true}} else { return {\"result\": false}}} e();");
+        inlineTask = new Javascript("task_name",
+                "function e() { if ($.value == 1){return {\"result\": true}} else { return {\"result\": false}}} e();");
         failed = false;
         try {
             inlineTask.validate();

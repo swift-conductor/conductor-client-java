@@ -32,8 +32,8 @@ import com.swiftconductor.conductor.common.metadata.workflow.WorkflowTask;
 import com.swiftconductor.conductor.sdk.workflow.def.ValidationError;
 
 /**
- * JQ Transformation task See https://stedolan.github.io/jq/ for how to form the queries to parse
- * JSON payloads
+ * JQ Transformation task See https://stedolan.github.io/jq/ for how to form the
+ * queries to parse JSON payloads
  */
 public class Javascript extends Task<Javascript> {
 
@@ -46,13 +46,16 @@ public class Javascript extends Task<Javascript> {
     private static final String ENGINE = "nashorn";
 
     /**
-     * Javascript tasks are executed on the Conductor server without having to write worker code
+     * Javascript tasks are executed on the Conductor server without having to write
+     * worker code
      *
-     * <p>Use {@link Javascript#validate()} method to validate the javascript to ensure the script
-     * is valid.
+     * <p>
+     * Use {@link Javascript#validate()} method to validate the javascript to ensure
+     * the script is valid.
      *
      * @param taskReferenceName
-     * @param script script to execute
+     * @param script
+     *            script to execute
      */
     public Javascript(String taskReferenceName, String script) {
         super(taskReferenceName, TaskType.INLINE);
@@ -64,13 +67,16 @@ public class Javascript extends Task<Javascript> {
     }
 
     /**
-     * Javascript tasks are executed on the Conductor server without having to write worker code
+     * Javascript tasks are executed on the Conductor server without having to write
+     * worker code
      *
-     * <p>Use {@link Javascript#validate()} method to validate the javascript to ensure the script
-     * is valid.
+     * <p>
+     * Use {@link Javascript#validate()} method to validate the javascript to ensure
+     * the script is valid.
      *
      * @param taskReferenceName
-     * @param stream stream to load the script file from
+     * @param stream
+     *            stream to load the script file from
      */
     public Javascript(String taskReferenceName, InputStream stream) {
         super(taskReferenceName, TaskType.INLINE);
@@ -120,10 +126,11 @@ public class Javascript extends Task<Javascript> {
     }
 
     /**
-     * Helper method to unit test your javascript. The method is not used for creating or executing
-     * workflow but is meant for testing only.
+     * Helper method to unit test your javascript. The method is not used for
+     * creating or executing workflow but is meant for testing only.
      *
-     * @param input Input that against which the script will be executed
+     * @param input
+     *            Input that against which the script will be executed
      * @return Output of the script
      */
     public Object test(Map<String, Object> input) {

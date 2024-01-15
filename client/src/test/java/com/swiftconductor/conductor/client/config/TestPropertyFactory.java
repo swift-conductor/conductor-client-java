@@ -15,7 +15,7 @@ package com.swiftconductor.conductor.client.config;
 
 import org.junit.Test;
 
-import com.swiftconductor.conductor.client.worker.Worker;
+import com.swiftconductor.conductor.client.worker.AbstractWorker;
 import com.swiftconductor.conductor.common.metadata.tasks.TaskResult;
 
 import static org.junit.Assert.assertEquals;
@@ -28,7 +28,7 @@ public class TestPropertyFactory {
 
     @Test
     public void testIdentity() {
-        Worker worker = Worker.create("Test2", TaskResult::new);
+        AbstractWorker worker = AbstractWorker.create("Test2", TaskResult::new);
         assertNotNull(worker.getIdentity());
         boolean paused = worker.paused();
         assertFalse("Paused? " + paused, paused);
@@ -39,25 +39,17 @@ public class TestPropertyFactory {
 
         int val = PropertyFactory.getInteger("workerB", "pollingInterval", 100);
         assertEquals("got: " + val, 2, val);
-        assertEquals(
-                100, PropertyFactory.getInteger("workerB", "propWithoutValue", 100).intValue());
+        assertEquals(100, PropertyFactory.getInteger("workerB", "propWithoutValue", 100).intValue());
 
-        assertFalse(
-                PropertyFactory.getBoolean(
-                        "workerB", "paused", true)); // Global value set to 'false'
-        assertTrue(
-                PropertyFactory.getBoolean(
-                        "workerA", "paused", false)); // WorkerA value set to 'true'
+        assertFalse(PropertyFactory.getBoolean("workerB", "paused", true)); // Global value set to 'false'
+        assertTrue(PropertyFactory.getBoolean("workerA", "paused", false)); // WorkerA value set to 'true'
 
-        assertEquals(
-                42,
-                PropertyFactory.getInteger("workerA", "batchSize", 42)
-                        .intValue()); // No global value set, so will return the default value
+        assertEquals(42, PropertyFactory.getInteger("workerA", "batchSize", 42).intValue()); // No global value set, so
+                                                                                             // will return the
+                                                                                             // default value
         // supplied
-        assertEquals(
-                84,
-                PropertyFactory.getInteger("workerB", "batchSize", 42)
-                        .intValue()); // WorkerB's value set to 84
+        assertEquals(84, PropertyFactory.getInteger("workerB", "batchSize", 42).intValue()); // WorkerB's value set to
+                                                                                             // 84
 
         assertEquals("domainA", PropertyFactory.getString("workerA", "domain", null));
         assertEquals("domainB", PropertyFactory.getString("workerB", "domain", null));
@@ -66,7 +58,7 @@ public class TestPropertyFactory {
 
     @Test
     public void testProperty() {
-        Worker worker = Worker.create("Test", TaskResult::new);
+        AbstractWorker worker = AbstractWorker.create("Test", TaskResult::new);
         boolean paused = worker.paused();
         assertTrue("Paused? " + paused, paused);
     }

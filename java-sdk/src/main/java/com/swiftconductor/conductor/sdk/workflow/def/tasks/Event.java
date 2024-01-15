@@ -17,16 +17,20 @@ import com.google.common.base.Strings;
 import com.swiftconductor.conductor.common.metadata.tasks.TaskType;
 import com.swiftconductor.conductor.common.metadata.workflow.WorkflowTask;
 
-/** Task to publish Events to external queuing systems like SQS, NATS, AMQP etc. */
+/**
+ * Task to publish Events to external queuing systems like SQS, NATS, AMQP etc.
+ */
 public class Event extends Task<Event> {
 
     private static final String SINK_PARAMETER = "sink";
 
     /**
-     * @param taskReferenceName Unique reference name within the workflow
-     * @param eventSink qualified name of the event sink where the message is published. Using the
-     *     format sink_type:location e.g. sqs:sqs_queue_name, amqp_queue:queue_name,
-     *     amqp_exchange:queue_name, nats:queue_name
+     * @param taskReferenceName
+     *            Unique reference name within the workflow
+     * @param eventSink
+     *            qualified name of the event sink where the message is published.
+     *            Using the format sink_type:location e.g. sqs:sqs_queue_name,
+     *            amqp_queue:queue_name, amqp_exchange:queue_name, nats:queue_name
      */
     public Event(String taskReferenceName, String eventSink) {
         super(taskReferenceName, TaskType.EVENT);

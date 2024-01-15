@@ -37,10 +37,13 @@ public class Switch extends Task<Switch> {
      * Switch case (similar to if...then...else or switch in java language)
      *
      * @param taskReferenceName
-     * @param caseExpression An expression that outputs a string value to be used as case branches.
-     *     Case expression can be a support value parameter e.g. ${workflow.input.key} or
-     *     ${task.output.key} or a Javascript statement.
-     * @param useJavascript set to true if the caseExpression is a javascript statement
+     * @param caseExpression
+     *            An expression that outputs a string value to be used as case
+     *            branches. Case expression can be a support value parameter e.g.
+     *            ${workflow.input.key} or ${task.output.key} or a Javascript
+     *            statement.
+     * @param useJavascript
+     *            set to true if the caseExpression is a javascript statement
      */
     public Switch(String taskReferenceName, String caseExpression, boolean useJavascript) {
         super(taskReferenceName, TaskType.SWITCH);
@@ -64,17 +67,15 @@ public class Switch extends Task<Switch> {
         super(workflowTask);
         Map<String, List<WorkflowTask>> decisions = workflowTask.getDecisionCases();
 
-        decisions.entrySet().stream()
-                .forEach(
-                        branch -> {
-                            String branchName = branch.getKey();
-                            List<WorkflowTask> branchWorkflowTasks = branch.getValue();
-                            List<Task<?>> branchTasks = new ArrayList<>();
-                            for (WorkflowTask branchWorkflowTask : branchWorkflowTasks) {
-                                branchTasks.add(TaskRegistry.getTask(branchWorkflowTask));
-                            }
-                            this.branches.put(branchName, branchTasks);
-                        });
+        decisions.entrySet().stream().forEach(branch -> {
+            String branchName = branch.getKey();
+            List<WorkflowTask> branchWorkflowTasks = branch.getValue();
+            List<Task<?>> branchTasks = new ArrayList<>();
+            for (WorkflowTask branchWorkflowTask : branchWorkflowTasks) {
+                branchTasks.add(TaskRegistry.getTask(branchWorkflowTask));
+            }
+            this.branches.put(branchName, branchTasks);
+        });
 
         List<WorkflowTask> defaultCases = workflowTask.getDefaultCase();
         for (WorkflowTask defaultCase : defaultCases) {
@@ -141,18 +142,15 @@ public class Switch extends Task<Switch> {
         }
 
         Map<String, List<WorkflowTask>> decisionCases = new HashMap<>();
-        branches.entrySet()
-                .forEach(
-                        entry -> {
-                            String decisionCase = entry.getKey();
-                            List<Task<?>> decisionTasks = entry.getValue();
-                            List<WorkflowTask> decionTaskDefs =
-                                    new ArrayList<>(decisionTasks.size());
-                            for (Task<?> decisionTask : decisionTasks) {
-                                decionTaskDefs.addAll(decisionTask.getWorkflowDefTasks());
-                            }
-                            decisionCases.put(decisionCase, decionTaskDefs);
-                        });
+        branches.entrySet().forEach(entry -> {
+            String decisionCase = entry.getKey();
+            List<Task<?>> decisionTasks = entry.getValue();
+            List<WorkflowTask> decionTaskDefs = new ArrayList<>(decisionTasks.size());
+            for (Task<?> decisionTask : decisionTasks) {
+                decionTaskDefs.addAll(decisionTask.getWorkflowDefTasks());
+            }
+            decisionCases.put(decisionCase, decionTaskDefs);
+        });
 
         workflowTask.setDecisionCases(decisionCases);
         List<WorkflowTask> defaultCaseTaskDefs = new ArrayList<>(defaultTasks.size());

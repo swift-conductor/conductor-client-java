@@ -17,14 +17,14 @@ import java.util.Date;
 
 import org.springframework.stereotype.Component;
 
-import com.swiftconductor.conductor.sdk.workflow.executor.task.TaskContext;
-import com.swiftconductor.conductor.sdk.workflow.task.InputParam;
-import com.swiftconductor.conductor.sdk.workflow.task.WorkerTask;
+import com.swiftconductor.conductor.sdk.worker.InputParam;
+import com.swiftconductor.conductor.sdk.worker.TaskContext;
+import com.swiftconductor.conductor.sdk.worker.Worker;
 
 @Component
 public class Workers {
 
-    @WorkerTask(value = "hello", threadCount = 3)
+    @Worker(value = "hello", threadCount = 3)
     public String helloWorld(@InputParam("name") String name) {
         TaskContext context = TaskContext.get();
         System.out.println(new Date() + ":: Poll count: " + context.getPollCount());
@@ -36,7 +36,7 @@ public class Workers {
         return "Hello, " + name;
     }
 
-    @WorkerTask(value = "hello_again", pollingInterval = 333)
+    @Worker(value = "hello_again", pollingInterval = 333)
     public String helloAgain(@InputParam("name") String name) {
         TaskContext context = TaskContext.get();
         System.out.println(new Date() + ":: Poll count: " + context.getPollCount());

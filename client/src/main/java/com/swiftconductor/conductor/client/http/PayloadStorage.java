@@ -28,11 +28,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.amazonaws.util.IOUtils;
-import com.swiftconductor.conductor.client.exception.ConductorClientException;
+import com.swiftconductor.conductor.client.exception.ClientException;
 import com.swiftconductor.conductor.common.run.ExternalStorageLocation;
 import com.swiftconductor.conductor.common.utils.ExternalPayloadStorage;
 
-/** An implementation of {@link ExternalPayloadStorage} for storing large JSON payload data. */
+/**
+ * An implementation of {@link ExternalPayloadStorage} for storing large JSON
+ * payload data.
+ */
 class PayloadStorage implements ExternalPayloadStorage {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PayloadStorage.class);
@@ -44,12 +47,11 @@ class PayloadStorage implements ExternalPayloadStorage {
     }
 
     /**
-     * This method is not intended to be used in the client. The client makes a request to the
-     * server to get the {@link ExternalStorageLocation}
+     * This method is not intended to be used in the client. The client makes a
+     * request to the server to get the {@link ExternalStorageLocation}
      */
     @Override
-    public ExternalStorageLocation getLocation(
-            Operation operation, PayloadType payloadType, String path) {
+    public ExternalStorageLocation getLocation(Operation operation, PayloadType payloadType, String path) {
         String uri;
         switch (payloadType) {
             case WORKFLOW_INPUT:
@@ -61,32 +63,27 @@ class PayloadStorage implements ExternalPayloadStorage {
                 uri = "tasks";
                 break;
             default:
-                throw new ConductorClientException(
-                        String.format(
-                                "Invalid payload type: %s for operation: %s",
-                                payloadType.toString(), operation.toString()));
+                throw new ClientException(String.format("Invalid payload type: %s for operation: %s",
+                        payloadType.toString(), operation.toString()));
         }
-        return clientBase.getForEntity(
-                String.format("%s/externalstoragelocation", uri),
-                new Object[] {
-                    "path",
-                    path,
-                    "operation",
-                    operation.toString(),
-                    "payloadType",
-                    payloadType.toString()
-                },
+        return clientBase.getForEntity(String.format("%s/externalstoragelocation", uri),
+                new Object[] { "path", path, "operation", operation.toString(), "payloadType", payloadType.toString() },
                 ExternalStorageLocation.class);
     }
 
     /**
      * Uploads the payload to the uri specified.
      *
-     * @param uri the location to which the object is to be uploaded
-     * @param payload an {@link InputStream} containing the json payload which is to be uploaded
-     * @param payloadSize the size of the json payload in bytes
-     * @throws ConductorClientException if the upload fails due to an invalid path or an error from
-     *     external storage
+     * @param uri
+     *            the location to which the object is to be uploaded
+     * @param payload
+     *            an {@link InputStream} containing the json payload which is to be
+     *            uploaded
+     * @param payloadSize
+     *            the size of the json payload in bytes
+     * @throws ClientException
+     *             if the upload fails due to an invalid path or an error from
+     *             external storage
      */
     @Override
     public void upload(String uri, InputStream payload, long payloadSize) {
@@ -98,33 +95,26 @@ class PayloadStorage implements ExternalPayloadStorage {
             connection.setDoOutput(true);
             connection.setRequestMethod("PUT");
 
-            try (BufferedOutputStream bufferedOutputStream =
-                    new BufferedOutputStream(connection.getOutputStream())) {
+            try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(connection.getOutputStream())) {
                 long count = IOUtils.copy(payload, bufferedOutputStream);
                 bufferedOutputStream.flush();
                 // Check the HTTP response code
                 int responseCode = connection.getResponseCode();
-                if (Response.Status.fromStatusCode(responseCode).getFamily()
-                        != Response.Status.Family.SUCCESSFUL) {
-                    String errorMsg =
-                            String.format("Unable to upload. Response code: %d", responseCode);
+                if (Response.Status.fromStatusCode(responseCode).getFamily() != Response.Status.Family.SUCCESSFUL) {
+                    String errorMsg = String.format("Unable to upload. Response code: %d", responseCode);
                     LOGGER.error(errorMsg);
-                    throw new ConductorClientException(errorMsg);
+                    throw new ClientException(errorMsg);
                 }
-                LOGGER.debug(
-                        "Uploaded {} bytes to uri: {}, with HTTP response code: {}",
-                        count,
-                        uri,
-                        responseCode);
+                LOGGER.debug("Uploaded {} bytes to uri: {}, with HTTP response code: {}", count, uri, responseCode);
             }
         } catch (URISyntaxException | MalformedURLException e) {
             String errorMsg = String.format("Invalid path specified: %s", uri);
             LOGGER.error(errorMsg, e);
-            throw new ConductorClientException(errorMsg, e);
+            throw new ClientException(errorMsg, e);
         } catch (IOException e) {
             String errorMsg = String.format("Error uploading to path: %s", uri);
             LOGGER.error(errorMsg, e);
-            throw new ConductorClientException(errorMsg, e);
+            throw new ClientException(errorMsg, e);
         } finally {
             if (connection != null) {
                 connection.disconnect();
@@ -142,10 +132,12 @@ class PayloadStorage implements ExternalPayloadStorage {
     /**
      * Downloads the payload from the given uri.
      *
-     * @param uri the location from where the object is to be downloaded
+     * @param uri
+     *            the location from where the object is to be downloaded
      * @return an inputstream of the payload in the external storage
-     * @throws ConductorClientException if the download fails due to an invalid path or an error
-     *     from external storage
+     * @throws ClientException
+     *             if the download fails due to an invalid path or an error from
+     *             external storage
      */
     @Override
     public InputStream download(String uri) {
@@ -159,23 +151,20 @@ class PayloadStorage implements ExternalPayloadStorage {
             // Check the HTTP response code
             int responseCode = connection.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
-                LOGGER.debug(
-                        "Download completed with HTTP response code: {}",
-                        connection.getResponseCode());
-                return org.apache.commons.io.IOUtils.toBufferedInputStream(
-                        connection.getInputStream());
+                LOGGER.debug("Download completed with HTTP response code: {}", connection.getResponseCode());
+                return org.apache.commons.io.IOUtils.toBufferedInputStream(connection.getInputStream());
             }
             errorMsg = String.format("Unable to download. Response code: %d", responseCode);
             LOGGER.error(errorMsg);
-            throw new ConductorClientException(errorMsg);
+            throw new ClientException(errorMsg);
         } catch (URISyntaxException | MalformedURLException e) {
             errorMsg = String.format("Invalid uri specified: %s", uri);
             LOGGER.error(errorMsg, e);
-            throw new ConductorClientException(errorMsg, e);
+            throw new ClientException(errorMsg, e);
         } catch (IOException e) {
             errorMsg = String.format("Error downloading from uri: %s", uri);
             LOGGER.error(errorMsg, e);
-            throw new ConductorClientException(errorMsg, e);
+            throw new ClientException(errorMsg, e);
         } finally {
             if (connection != null) {
                 connection.disconnect();

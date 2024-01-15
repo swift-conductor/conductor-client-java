@@ -33,13 +33,13 @@ import org.slf4j.LoggerFactory;
 import com.swiftconductor.conductor.common.metadata.tasks.TaskType;
 import com.swiftconductor.conductor.common.metadata.workflow.WorkflowDef;
 import com.swiftconductor.conductor.common.run.Workflow;
+import com.swiftconductor.conductor.sdk.testing.TestWorkflowInput;
 import com.swiftconductor.conductor.sdk.testing.WorkflowTestRunner;
+import com.swiftconductor.conductor.sdk.worker.InputParam;
+import com.swiftconductor.conductor.sdk.worker.OutputParam;
+import com.swiftconductor.conductor.sdk.worker.Worker;
+import com.swiftconductor.conductor.sdk.workflow.WorkflowManager;
 import com.swiftconductor.conductor.sdk.workflow.def.tasks.*;
-import com.swiftconductor.conductor.sdk.workflow.executor.WorkflowExecutor;
-import com.swiftconductor.conductor.sdk.workflow.task.InputParam;
-import com.swiftconductor.conductor.sdk.workflow.task.OutputParam;
-import com.swiftconductor.conductor.sdk.workflow.task.WorkerTask;
-import com.swiftconductor.conductor.sdk.workflow.testing.TestWorkflowInput;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -48,7 +48,7 @@ public class WorkflowCreationTests {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WorkflowCreationTests.class);
 
-    private static WorkflowExecutor executor;
+    private static WorkflowManager manager;
 
     private static WorkflowTestRunner runner;
 
@@ -56,7 +56,7 @@ public class WorkflowCreationTests {
     public static void init() throws IOException {
         runner = new WorkflowTestRunner(8080, "3.16.0-SNAPSHOT");
         runner.init("com.swiftconductor.conductor.sdk");
-        executor = runner.getWorkflowExecutor();
+        manager = runner.getWorkflowManager();
     }
 
     @AfterAll
@@ -64,22 +64,22 @@ public class WorkflowCreationTests {
         runner.shutdown();
     }
 
-    @WorkerTask("get_user_info")
+    @Worker("get_user_info")
     public @OutputParam("zipCode") String getZipCode(@InputParam("name") String userName) {
         return "95014";
     }
 
-    @WorkerTask("task2")
+    @Worker("task2")
     public @OutputParam("greetings") String task2() {
         return "Hello World";
     }
 
-    @WorkerTask("task3")
+    @Worker("task3")
     public @OutputParam("greetings") String task3() {
         return "Hello World-3";
     }
 
-    @WorkerTask("fork_gen")
+    @Worker("fork_gen")
     public DynamicForkInput generateDynamicFork() {
         DynamicForkInput forks = new DynamicForkInput();
         Map<String, Object> inputs = new HashMap<>();
@@ -98,8 +98,7 @@ public class WorkflowCreationTests {
         return forks;
     }
 
-    private ConductorWorkflow<TestWorkflowInput> registerTestWorkflow()
-            throws InterruptedException {
+    private ConductorWorkflow<TestWorkflowInput> registerTestWorkflow() throws InterruptedException {
         InputStream script = getClass().getResourceAsStream("/script.js");
         CustomTask getUserInfo = new CustomTask("get_user_info", "get_user_info");
         getUserInfo.input("name", ConductorWorkflow.input.get("name"));
@@ -113,31 +112,24 @@ public class WorkflowCreationTests {
             parallelTasks[i][0] = new CustomTask("task2", "task_parallel_" + i);
         }
 
-        WorkflowBuilder<TestWorkflowInput> builder = new WorkflowBuilder<>(executor);
+        WorkflowBuilder<TestWorkflowInput> builder = new WorkflowBuilder<>();
         TestWorkflowInput defaultInput = new TestWorkflowInput();
         defaultInput.setName("defaultName");
 
-        builder.name("sdk_workflow_example")
-                .version(1)
-                .ownerEmail("hello@example.com")
-                .description("Example Workflow")
-                .restartable(true)
-                .variables(new WorkflowState())
-                .timeoutPolicy(WorkflowDef.TimeoutPolicy.TIME_OUT_WF, 100)
-                .defaultInput(defaultInput)
-                .add(new Javascript("js", script))
-                .add(new ForkJoin("parallel", parallelTasks))
-                .add(getUserInfo)
-                .add(
-                        new Switch("decide2", "${workflow.input.zipCode}")
-                                .switchCase("95014", sendToCupertino)
-                                .switchCase("10121", sendToNYC))
+        builder.name("sdk_workflow_example").version(1).ownerEmail("hello@example.com").description("Example Workflow")
+                .restartable(true).variables(new WorkflowState())
+                .timeoutPolicy(WorkflowDef.TimeoutPolicy.TIME_OUT_WF, 100).defaultInput(defaultInput)
+                .add(new Javascript("js", script)).add(new ForkJoin("parallel", parallelTasks)).add(getUserInfo)
+                .add(new Switch("decide2", "${workflow.input.zipCode}").switchCase("95014", sendToCupertino)
+                        .switchCase("10121", sendToNYC))
                 // .add(new SubWorkflow("subflow", "sub_workflow_example", 5))
                 .add(new CustomTask("task2", "task222"))
                 .add(new DynamicFork("dynamic_fork", new CustomTask("fork_gen", "fork_gen")));
 
         ConductorWorkflow<TestWorkflowInput> workflow = builder.build();
-        boolean registered = workflow.registerWorkflow(true, true);
+        
+        var workflowDef = workflow.toWorkflowDef();
+        boolean registered = manager.registerWorkflow(workflowDef, true);
         assertTrue(registered);
 
         return workflow;
@@ -149,26 +141,17 @@ public class WorkflowCreationTests {
         WorkflowDef def = conductorWorkflow.toWorkflowDef();
         assertNotNull(def);
         assertTrue(
-                def.getTasks()
-                        .get(def.getTasks().size() - 2)
-                        .getType()
-                        .equals(TaskType.TASK_TYPE_FORK_JOIN_DYNAMIC));
-        assertTrue(
-                def.getTasks()
-                        .get(def.getTasks().size() - 1)
-                        .getType()
-                        .equals(TaskType.TASK_TYPE_JOIN));
+                def.getTasks().get(def.getTasks().size() - 2).getType().equals(TaskType.TASK_TYPE_FORK_JOIN_DYNAMIC));
+        assertTrue(def.getTasks().get(def.getTasks().size() - 1).getType().equals(TaskType.TASK_TYPE_JOIN));
     }
 
     @Test
     public void verifyInlineWorkflowExecution() throws ValidationError {
         TestWorkflowInput workflowInput = new TestWorkflowInput("username", "10121", "US");
         try {
-            Workflow run = registerTestWorkflow().execute(workflowInput).get(10, TimeUnit.SECONDS);
-            assertEquals(
-                    Workflow.WorkflowStatus.COMPLETED,
-                    run.getStatus(),
-                    run.getReasonForIncompletion());
+            var workflow = registerTestWorkflow();
+            Workflow run = manager.startWorkflow(workflow.getName(), workflow.getVersion(), workflowInput).get(10, TimeUnit.SECONDS);
+            assertEquals(Workflow.WorkflowStatus.COMPLETED, run.getStatus(), run.getReasonForIncompletion());
         } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
@@ -181,15 +164,14 @@ public class WorkflowCreationTests {
         // Register the workflow first
         registerTestWorkflow();
 
+        WorkflowDef def = manager.getMetadataClient().getWorkflowDef("sdk_workflow_example", null);
+        ConductorWorkflow<TestWorkflowInput> conductorWorkflow = ConductorWorkflow.fromWorkflowDef(def);
+
         TestWorkflowInput input = new TestWorkflowInput("username", "10121", "US");
+        CompletableFuture<Workflow> run = manager.startWorkflow(conductorWorkflow, input);
 
-        ConductorWorkflow<TestWorkflowInput> conductorWorkflow =
-                new ConductorWorkflow<TestWorkflowInput>(executor)
-                        .from("sdk_workflow_example", null);
-
-        CompletableFuture<Workflow> execution = conductorWorkflow.execute(input);
         try {
-            execution.get(10, TimeUnit.SECONDS);
+            run.get(10, TimeUnit.SECONDS);
         } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
@@ -197,19 +179,18 @@ public class WorkflowCreationTests {
     }
 
     @Test
-    public void verifyWorkflowExecutionFailsIfNotExists()
-            throws ExecutionException, InterruptedException {
+    public void verifyWorkflowExecutionFailsIfNotExists() throws ExecutionException, InterruptedException {
 
         // Register the workflow first
         registerTestWorkflow();
 
-        TestWorkflowInput input = new TestWorkflowInput("username", "10121", "US");
-
         try {
-            ConductorWorkflow<TestWorkflowInput> conductorWorkflow =
-                    new ConductorWorkflow<TestWorkflowInput>(executor)
-                            .from("non_existent_workflow", null);
-            conductorWorkflow.execute(input);
+            WorkflowDef def = manager.getMetadataClient().getWorkflowDef("non_existent_workflow", null);
+            ConductorWorkflow<TestWorkflowInput> conductorWorkflow = ConductorWorkflow.fromWorkflowDef(def);
+    
+            TestWorkflowInput input = new TestWorkflowInput("username", "10121", "US");
+            manager.startWorkflow(conductorWorkflow, input);
+
             fail("execution should have failed");
         } catch (Exception e) {
         }

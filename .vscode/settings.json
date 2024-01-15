@@ -1,4 +1,10 @@
 {
     "java.configuration.updateBuildConfiguration": "disabled",
-    "java.compile.nullAnalysis.mode": "automatic"
+    "java.compile.nullAnalysis.mode": "automatic",
+    "java.format.settings.url": ".vscode/java-formatter.xml",
+
+    "[java]": {
+        "spotlessGradle.format.enable": true,
+        "spotlessGradle.diagnostics.enable": true,
+    }
 }

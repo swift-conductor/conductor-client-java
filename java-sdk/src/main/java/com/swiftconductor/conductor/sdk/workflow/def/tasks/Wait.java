@@ -28,17 +28,19 @@ public class Wait extends Task<Wait> {
     public static final String DURATION_INPUT = "duration";
     public static final String UNTIL_INPUT = "until";
 
-    public static final DateTimeFormatter dateTimeFormatter =
-            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm z");
+    public static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm z");
 
     /**
-     * Wait until and external signal completes the task. The external signal can be either an API
-     * call (POST /api/task) to update the task status or an event coming from a supported external
-     * queue integration like SQS, Kafka, NATS, AMQP etc.
+     * Wait until and external signal completes the task. The external signal can be
+     * either an API call (POST /api/task) to update the task status or an event
+     * coming from a supported external queue integration like SQS, Kafka, NATS,
+     * AMQP etc.
      *
-     * <p><br>
+     * <p>
+     * <br>
      * see <a href=https://netflix.github.io/conductor/reference-docs/wait-task/>
-     * https://netflix.github.io/conductor/reference-docs/wait-task</a> for more details
+     * https://netflix.github.io/conductor/reference-docs/wait-task</a> for more
+     * details
      *
      * @param taskReferenceName
      */
