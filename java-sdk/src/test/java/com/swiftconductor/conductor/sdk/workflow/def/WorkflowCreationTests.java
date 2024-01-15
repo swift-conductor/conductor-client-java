@@ -127,7 +127,7 @@ public class WorkflowCreationTests {
                 .add(new DynamicFork("dynamic_fork", new CustomTask("fork_gen", "fork_gen")));
 
         WorkflowWithInput<TestWorkflowInput> workflow = builder.build();
-        
+
         var workflowDef = workflow.toWorkflowDef();
         boolean registered = manager.registerWorkflow(workflowDef, true);
         assertTrue(registered);
@@ -187,7 +187,7 @@ public class WorkflowCreationTests {
         try {
             WorkflowDef def = manager.getMetadataClient().getWorkflowDef("non_existent_workflow", null);
             WorkflowWithInput<TestWorkflowInput> conductorWorkflow = WorkflowWithInput.fromWorkflowDef(def);
-    
+
             TestWorkflowInput input = new TestWorkflowInput("username", "10121", "US");
             manager.startWorkflow(conductorWorkflow, input);
 

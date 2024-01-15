@@ -44,7 +44,8 @@ public class WorkflowManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WorkflowManager.class);
 
-    private final TypeReference<List<TaskDef>> listOfTaskDefs = new TypeReference<>() { };
+    private final TypeReference<List<TaskDef>> listOfTaskDefs = new TypeReference<>() {
+    };
 
     private Map<String, CompletableFuture<Workflow>> runningWorkflowFutures = new ConcurrentHashMap<>();
 
@@ -80,12 +81,13 @@ public class WorkflowManager {
         TaskRegistry.register(TaskType.EVENT.name(), Event.class);
     }
 
-    public WorkflowManager (String apiServerURL) {
+    public WorkflowManager(String apiServerURL) {
         this(apiServerURL, new ClientFilter[0]);
     }
 
-    // public WorkflowManager (String apiServerURL, int pollingInterval, ClientFilter... clientFilter) {
-    public WorkflowManager (String apiServerURL, ClientFilter... clientFilter) {
+    // public WorkflowManager (String apiServerURL, int pollingInterval,
+    // ClientFilter... clientFilter) {
+    public WorkflowManager(String apiServerURL, ClientFilter... clientFilter) {
 
         taskClient = new TaskClient(new DefaultClientConfig(), (ClientHandler) null, clientFilter);
         taskClient.setRootURI(apiServerURL);
@@ -110,8 +112,9 @@ public class WorkflowManager {
         }, 100, 100, TimeUnit.MILLISECONDS);
     }
 
-    // public WorkflowManager (TaskClient taskClient, WorkflowClient workflowClient, MetadataClient metadataClient, int pollingInterval) {
-    public WorkflowManager (TaskClient taskClient, WorkflowClient workflowClient, MetadataClient metadataClient) {    
+    // public WorkflowManager (TaskClient taskClient, WorkflowClient workflowClient,
+    // MetadataClient metadataClient, int pollingInterval) {
+    public WorkflowManager(TaskClient taskClient, WorkflowClient workflowClient, MetadataClient metadataClient) {
         this.taskClient = taskClient;
         this.workflowClient = workflowClient;
         this.metadataClient = metadataClient;
@@ -130,7 +133,7 @@ public class WorkflowManager {
     }
 
     // public void initWorkers(String packagesToScan) {
-    //     annotatedWorkerHost.initWorkers(packagesToScan);
+    // annotatedWorkerHost.initWorkers(packagesToScan);
     // }
 
     public CompletableFuture<Workflow> startWorkflow(String name, Integer version, Object input) {
@@ -205,7 +208,7 @@ public class WorkflowManager {
             } else {
                 metadataClient.registerWorkflowDef(workflowDef);
             }
-            
+
             return true;
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);

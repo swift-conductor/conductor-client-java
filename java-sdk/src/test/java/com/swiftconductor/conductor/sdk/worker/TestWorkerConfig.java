@@ -16,8 +16,6 @@ package com.swiftconductor.conductor.sdk.worker;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.swiftconductor.conductor.sdk.worker.WorkerConfiguration;
-
 public class TestWorkerConfig extends WorkerConfiguration {
 
     private Map<String, Integer> pollingIntervals = new HashMap<>();

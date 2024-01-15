@@ -25,7 +25,8 @@ import com.swiftconductor.conductor.sdk.workflow.utils.InputOutputGetter;
 import com.swiftconductor.conductor.sdk.workflow.utils.ObjectMapperProvider;
 
 /**
- * @param <T> Type of the workflow input
+ * @param <T>
+ *            Type of the workflow input
  */
 public class WorkflowWithInput<T> {
 

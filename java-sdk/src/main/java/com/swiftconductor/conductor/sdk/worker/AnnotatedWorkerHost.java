@@ -120,7 +120,7 @@ public class AnnotatedWorkerHost {
                     LOGGER.trace("Caught exception while loading and scanning class {}", t.getMessage());
                 }
             });
-            
+
             LOGGER.info("Took {} ms to scan all the classes, loading {} tasks", (System.currentTimeMillis() - s), workerProcesses.size());
         } catch (Exception e) {
             LOGGER.error("Error while scanning for workers: ", e);

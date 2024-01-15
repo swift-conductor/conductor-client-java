@@ -28,11 +28,6 @@ import com.swiftconductor.conductor.client.automation.WorkerHost;
 import com.swiftconductor.conductor.client.http.TaskClient;
 import com.swiftconductor.conductor.client.worker.AbstractWorker;
 import com.swiftconductor.conductor.common.metadata.tasks.Task;
-import com.swiftconductor.conductor.sdk.worker.AnnotatedWorker;
-import com.swiftconductor.conductor.sdk.worker.AnnotatedWorkerHost;
-import com.swiftconductor.conductor.sdk.worker.InputParam;
-import com.swiftconductor.conductor.sdk.worker.OutputParam;
-import com.swiftconductor.conductor.sdk.worker.Worker;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;

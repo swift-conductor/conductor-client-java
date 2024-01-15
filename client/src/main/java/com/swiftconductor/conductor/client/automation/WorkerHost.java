@@ -35,7 +35,8 @@ import com.swiftconductor.conductor.client.http.TaskClient;
 import com.swiftconductor.conductor.client.worker.AbstractWorker;
 
 /**
- * Configures automated polling of tasks and execution via the registered {@link AbstractWorker}s.
+ * Configures automated polling of tasks and execution via the registered
+ * {@link AbstractWorker}s.
  */
 public class WorkerHost {
     static final Logger LOGGER = LoggerFactory.getLogger(WorkerHost.class);
@@ -269,15 +270,14 @@ public class WorkerHost {
      */
     public synchronized void init() {
         this.taskPollExecutor = new WorkerProcess(
-            eurekaClient, taskClient, updateRetryCount, 
-            taskToDomain, workerNamePrefix, taskThreadCount);
+                eurekaClient, taskClient, updateRetryCount,
+                taskToDomain, workerNamePrefix, taskThreadCount);
 
         this.scheduledExecutorService = Executors.newScheduledThreadPool(workers.size());
-        workers.forEach(worker -> scheduledExecutorService.scheduleWithFixedDelay(() -> 
-                                        taskPollExecutor.pollAndExecute(worker),
-                                        worker.getPollingInterval(), 
-                                        worker.getPollingInterval(), 
-                                        TimeUnit.MILLISECONDS));
+        workers.forEach(worker -> scheduledExecutorService.scheduleWithFixedDelay(() -> taskPollExecutor.pollAndExecute(worker),
+                worker.getPollingInterval(),
+                worker.getPollingInterval(),
+                TimeUnit.MILLISECONDS));
     }
 
     /**

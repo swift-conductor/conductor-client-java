@@ -29,7 +29,6 @@ import org.junit.jupiter.api.Test;
 import com.swiftconductor.conductor.common.metadata.tasks.Task;
 import com.swiftconductor.conductor.common.metadata.tasks.TaskResult;
 import com.swiftconductor.conductor.common.run.Workflow;
-import com.swiftconductor.conductor.sdk.testing.WorkflowTestRunner;
 import com.swiftconductor.conductor.sdk.worker.InputParam;
 import com.swiftconductor.conductor.sdk.worker.OutputParam;
 import com.swiftconductor.conductor.sdk.worker.Worker;

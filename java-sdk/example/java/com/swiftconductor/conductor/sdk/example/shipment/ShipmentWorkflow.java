@@ -16,17 +16,14 @@ package com.swiftconductor.conductor.sdk.example.shipment;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
+import com.swiftconductor.conductor.common.metadata.workflow.WorkflowDef;
+import com.swiftconductor.conductor.common.run.Workflow;
+import com.swiftconductor.conductor.sdk.worker.AnnotatedWorkerHost;
+import com.swiftconductor.conductor.sdk.workflow.WorkflowManager;
 import com.swiftconductor.conductor.sdk.workflow.def.WorkflowBuilder;
 import com.swiftconductor.conductor.sdk.workflow.def.WorkflowWithInput;
-
-import com.swiftconductor.conductor.common.metadata.workflow.WorkflowDef;
 import com.swiftconductor.conductor.sdk.workflow.def.tasks.*;
 
-import com.swiftconductor.conductor.common.run.Workflow;
-import com.swiftconductor.conductor.sdk.workflow.WorkflowManager;
-
-import com.swiftconductor.conductor.sdk.worker.AnnotatedWorkerHost;
-    
 public class ShipmentWorkflow {
 
     private final WorkflowManager manager;
@@ -107,7 +104,7 @@ public class ShipmentWorkflow {
                 // Update the workflow state with shipped = true
                 .add(new SetVariable("update_state").input("shipped", true)).build();
 
-        var workflowDef = conductorWorkflow.toWorkflowDef();                        
+        var workflowDef = conductorWorkflow.toWorkflowDef();
         manager.registerWorkflow(workflowDef, true);
 
         return conductorWorkflow;
