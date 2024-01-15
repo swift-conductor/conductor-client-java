@@ -14,7 +14,6 @@
 package com.swiftconductor.conductor.client.sample;
 
 import java.util.Arrays;
-import java.util.Map;
 
 import com.swiftconductor.conductor.client.automation.WorkerHost;
 import com.swiftconductor.conductor.client.http.TaskClient;
@@ -34,10 +33,15 @@ public class Main {
         AbstractWorker worker2 = new SampleWorker("task_5");
 
         // Create WorkerHost
-        WorkerHost configurer = new WorkerHost.Builder(taskClient, Arrays.asList(worker1, worker2))
-                .withTaskThreadCount(Map.of("task_1", 1, "task_5", 1)).build();
+        WorkerHost host = new WorkerHost.Builder(taskClient, Arrays.asList(worker1, worker2))
+                .withThreadCount(threadCount).build();
+
+        // or
+        // WorkerHost host = new WorkerHost.Builder(taskClient, Arrays.asList(worker1,
+        // worker2))
+        // .withTaskThreadCount(Map.of("task_1", 1, "task_5", 1)).build();
 
         // Start the polling and execution of tasks
-        configurer.init();
+        host.init();
     }
 }
