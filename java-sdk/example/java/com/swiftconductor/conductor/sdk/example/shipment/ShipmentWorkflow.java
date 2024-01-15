@@ -17,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 import com.swiftconductor.conductor.sdk.workflow.def.WorkflowBuilder;
-import com.swiftconductor.conductor.sdk.workflow.def.ConductorWorkflow;
+import com.swiftconductor.conductor.sdk.workflow.def.WorkflowWithInput;
 
 import com.swiftconductor.conductor.common.metadata.workflow.WorkflowDef;
 import com.swiftconductor.conductor.sdk.workflow.def.tasks.*;
@@ -39,40 +39,40 @@ public class ShipmentWorkflow {
         this.annotatedWorkerHost.initWorkers(ShipmentWorkflow.class.getPackageName());
     }
 
-    public ConductorWorkflow<Order> createOrderFlow() {
+    public WorkflowWithInput<Order> createOrderFlow() {
         WorkflowBuilder<Order> builder = new WorkflowBuilder<>();
         builder.name("order_flow").version(1).ownerEmail("user@example.com")
                 .timeoutPolicy(WorkflowDef.TimeoutPolicy.TIME_OUT_WF, 60) // 1 day max
                 .description("Workflow to track shipment")
                 .add(new CustomTask("calculate_tax_and_total", "calculate_tax_and_total").input("orderDetail",
-                        ConductorWorkflow.input.get("orderDetail")))
+                        WorkflowWithInput.input.get("orderDetail")))
                 .add(new CustomTask("charge_payment", "charge_payment").input("billingId",
-                        ConductorWorkflow.input.map("userDetails").get("billingId"), "billingType",
-                        ConductorWorkflow.input.map("userDetails").get("billingType"), "amount",
+                        WorkflowWithInput.input.map("userDetails").get("billingId"), "billingType",
+                        WorkflowWithInput.input.map("userDetails").get("billingType"), "amount",
                         "${calculate_tax_and_total.output.total_amount}"))
                 .add(new Switch("shipping_label", "${workflow.input.orderDetail.shippingMethod}")
                         .switchCase(Order.ShippingMethod.GROUND.toString(),
                                 new CustomTask("ground_shipping_label", "ground_shipping_label").input("name",
-                                        ConductorWorkflow.input.map("userDetails").get("name"), "address",
-                                        ConductorWorkflow.input.map("userDetails").get("addressLine"), "orderNo",
-                                        ConductorWorkflow.input.map("orderDetail").get("orderNumber")))
+                                        WorkflowWithInput.input.map("userDetails").get("name"), "address",
+                                        WorkflowWithInput.input.map("userDetails").get("addressLine"), "orderNo",
+                                        WorkflowWithInput.input.map("orderDetail").get("orderNumber")))
                         .switchCase(Order.ShippingMethod.NEXT_DAY_AIR.toString(),
                                 new CustomTask("air_shipping_label", "air_shipping_label").input("name",
-                                        ConductorWorkflow.input.map("userDetails").get("name"), "address",
-                                        ConductorWorkflow.input.map("userDetails").get("addressLine"), "orderNo",
-                                        ConductorWorkflow.input.map("orderDetail").get("orderNumber")))
+                                        WorkflowWithInput.input.map("userDetails").get("name"), "address",
+                                        WorkflowWithInput.input.map("userDetails").get("addressLine"), "orderNo",
+                                        WorkflowWithInput.input.map("orderDetail").get("orderNumber")))
                         .switchCase(Order.ShippingMethod.SAME_DAY.toString(),
                                 new CustomTask("same_day_shipping_label", "same_day_shipping_label").input("name",
-                                        ConductorWorkflow.input.map("userDetails").get("name"), "address",
-                                        ConductorWorkflow.input.map("userDetails").get("addressLine"), "orderNo",
-                                        ConductorWorkflow.input.map("orderDetail").get("orderNumber")))
+                                        WorkflowWithInput.input.map("userDetails").get("name"), "address",
+                                        WorkflowWithInput.input.map("userDetails").get("addressLine"), "orderNo",
+                                        WorkflowWithInput.input.map("orderDetail").get("orderNumber")))
                         .defaultCase(new Terminate("unsupported_shipping_type", Workflow.WorkflowStatus.FAILED,
                                 "Unsupported Shipping Method")))
                 .add(new CustomTask("send_email", "send_email").input("name",
-                        ConductorWorkflow.input.map("userDetails").get("name"), "email",
-                        ConductorWorkflow.input.map("userDetails").get("email"), "orderNo",
-                        ConductorWorkflow.input.map("orderDetail").get("orderNumber")));
-        ConductorWorkflow<Order> conductorWorkflow = builder.build();
+                        WorkflowWithInput.input.map("userDetails").get("name"), "email",
+                        WorkflowWithInput.input.map("userDetails").get("email"), "orderNo",
+                        WorkflowWithInput.input.map("orderDetail").get("orderNumber")));
+        WorkflowWithInput<Order> conductorWorkflow = builder.build();
 
         var workflowDef = conductorWorkflow.toWorkflowDef();
         manager.registerWorkflow(workflowDef, true);
@@ -80,17 +80,17 @@ public class ShipmentWorkflow {
         return conductorWorkflow;
     }
 
-    public ConductorWorkflow<Shipment> createShipmentWorkflow() {
+    public WorkflowWithInput<Shipment> createShipmentWorkflow() {
 
         WorkflowBuilder<Shipment> builder = new WorkflowBuilder<>();
 
         CustomTask getOrderDetails = new CustomTask("get_order_details", "get_order_details").input("orderNo",
-                ConductorWorkflow.input.get("orderNo"));
+                WorkflowWithInput.input.get("orderNo"));
 
         CustomTask getUserDetails = new CustomTask("get_user_details", "get_user_details").input("userId",
-                ConductorWorkflow.input.get("userId"));
+                WorkflowWithInput.input.get("userId"));
 
-        ConductorWorkflow<Shipment> conductorWorkflow = builder.name("shipment_workflow").version(1)
+        WorkflowWithInput<Shipment> conductorWorkflow = builder.name("shipment_workflow").version(1)
                 .ownerEmail("user@example.com").variables(new ShipmentState())
                 .timeoutPolicy(WorkflowDef.TimeoutPolicy.TIME_OUT_WF, 60) // 30 days
                 .description("Workflow to track shipment")
@@ -126,7 +126,7 @@ public class ShipmentWorkflow {
         // 1. Order flow that ships an individual order
         // 2. Shipment Workflow that tracks multiple orders in a shipment
         shipmentWorkflow.createOrderFlow();
-        ConductorWorkflow<Shipment> workflow = shipmentWorkflow.createShipmentWorkflow();
+        WorkflowWithInput<Shipment> workflow = shipmentWorkflow.createShipmentWorkflow();
 
         // Execute the workflow and wait for it to complete
         try {

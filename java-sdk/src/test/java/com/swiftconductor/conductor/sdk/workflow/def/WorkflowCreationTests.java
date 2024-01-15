@@ -98,10 +98,10 @@ public class WorkflowCreationTests {
         return forks;
     }
 
-    private ConductorWorkflow<TestWorkflowInput> registerTestWorkflow() throws InterruptedException {
+    private WorkflowWithInput<TestWorkflowInput> registerTestWorkflow() throws InterruptedException {
         InputStream script = getClass().getResourceAsStream("/script.js");
         CustomTask getUserInfo = new CustomTask("get_user_info", "get_user_info");
-        getUserInfo.input("name", ConductorWorkflow.input.get("name"));
+        getUserInfo.input("name", WorkflowWithInput.input.get("name"));
 
         CustomTask sendToCupertino = new CustomTask("task2", "cupertino");
         CustomTask sendToNYC = new CustomTask("task2", "nyc");
@@ -126,7 +126,7 @@ public class WorkflowCreationTests {
                 .add(new CustomTask("task2", "task222"))
                 .add(new DynamicFork("dynamic_fork", new CustomTask("fork_gen", "fork_gen")));
 
-        ConductorWorkflow<TestWorkflowInput> workflow = builder.build();
+        WorkflowWithInput<TestWorkflowInput> workflow = builder.build();
         
         var workflowDef = workflow.toWorkflowDef();
         boolean registered = manager.registerWorkflow(workflowDef, true);
@@ -137,7 +137,7 @@ public class WorkflowCreationTests {
 
     @Test
     public void verifyCreatedWorkflow() throws Exception {
-        ConductorWorkflow<TestWorkflowInput> conductorWorkflow = registerTestWorkflow();
+        WorkflowWithInput<TestWorkflowInput> conductorWorkflow = registerTestWorkflow();
         WorkflowDef def = conductorWorkflow.toWorkflowDef();
         assertNotNull(def);
         assertTrue(
@@ -165,7 +165,7 @@ public class WorkflowCreationTests {
         registerTestWorkflow();
 
         WorkflowDef def = manager.getMetadataClient().getWorkflowDef("sdk_workflow_example", null);
-        ConductorWorkflow<TestWorkflowInput> conductorWorkflow = ConductorWorkflow.fromWorkflowDef(def);
+        WorkflowWithInput<TestWorkflowInput> conductorWorkflow = WorkflowWithInput.fromWorkflowDef(def);
 
         TestWorkflowInput input = new TestWorkflowInput("username", "10121", "US");
         CompletableFuture<Workflow> run = manager.startWorkflow(conductorWorkflow, input);
@@ -186,7 +186,7 @@ public class WorkflowCreationTests {
 
         try {
             WorkflowDef def = manager.getMetadataClient().getWorkflowDef("non_existent_workflow", null);
-            ConductorWorkflow<TestWorkflowInput> conductorWorkflow = ConductorWorkflow.fromWorkflowDef(def);
+            WorkflowWithInput<TestWorkflowInput> conductorWorkflow = WorkflowWithInput.fromWorkflowDef(def);
     
             TestWorkflowInput input = new TestWorkflowInput("username", "10121", "US");
             manager.startWorkflow(conductorWorkflow, input);

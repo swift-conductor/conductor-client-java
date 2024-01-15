@@ -25,10 +25,9 @@ import com.swiftconductor.conductor.sdk.workflow.utils.InputOutputGetter;
 import com.swiftconductor.conductor.sdk.workflow.utils.ObjectMapperProvider;
 
 /**
- * @param <T>
- *            Type of the workflow input
+ * @param <T> Type of the workflow input
  */
-public class ConductorWorkflow<T> {
+public class WorkflowWithInput<T> {
 
     public static final InputOutputGetter input = new InputOutputGetter("workflow", InputOutputGetter.Field.input);
 
@@ -60,7 +59,7 @@ public class ConductorWorkflow<T> {
 
     private final ObjectMapper objectMapper = new ObjectMapperProvider().getObjectMapper();
 
-    public ConductorWorkflow() {
+    public WorkflowWithInput() {
         this.workflowOutput = new HashMap<>();
         this.restartable = true;
     }
@@ -181,18 +180,18 @@ public class ConductorWorkflow<T> {
     }
 
     /**
-     * Generate ConductorWorkflow based on the workflow metadata definition
+     * Generate WorkflowWithInput based on the workflow metadata definition
      *
      * @param def
      * @return
      */
-    public static <T> ConductorWorkflow<T> fromWorkflowDef(WorkflowDef def) {
-        ConductorWorkflow<T> workflow = new ConductorWorkflow<>();
+    public static <T> WorkflowWithInput<T> fromWorkflowDef(WorkflowDef def) {
+        WorkflowWithInput<T> workflow = new WorkflowWithInput<>();
         fromWorkflowDef(workflow, def);
         return workflow;
     }
 
-    private static <T> void fromWorkflowDef(ConductorWorkflow<T> workflow, WorkflowDef def) {
+    private static <T> void fromWorkflowDef(WorkflowWithInput<T> workflow, WorkflowDef def) {
         workflow.setName(def.getName());
         workflow.setVersion(def.getVersion());
         workflow.setFailureWorkflow(def.getFailureWorkflow());
@@ -219,7 +218,8 @@ public class ConductorWorkflow<T> {
             return true;
         if (o == null || getClass() != o.getClass())
             return false;
-        ConductorWorkflow workflow = (ConductorWorkflow) o;
+
+        WorkflowWithInput workflow = (WorkflowWithInput) o;
         return version == workflow.version && Objects.equals(name, workflow.name);
     }
 

@@ -2,14 +2,14 @@
 
 ## APIs
 
-### ConductorWorkflow
+### WorkflowWithInput
 
-[ConductorWorkflow](https://github.com/conductor-client-java/blob/main/java-sdk/src/main/java/com/swiftconductor/conductor/sdk/workflow/def/ConductorWorkflow.java) is the SDK representation of a Conductor workflow.
+[WorkflowWithInput](https://github.com/conductor-client-java/blob/main/java-sdk/src/main/java/com/swiftconductor/conductor/sdk/workflow/def/WorkflowWithInput.java) is the SDK representation of a Conductor workflow.
 
-#### Create a `ConductorWorkflow` Instance
+#### Create a `WorkflowWithInput` Instance
 
 ```java
-ConductorWorkflow<GetInsuranceQuote> conductorWorkflow = new WorkflowBuilder<GetInsuranceQuote>()
+WorkflowWithInput<GetInsuranceQuote> conductorWorkflow = new WorkflowBuilder<GetInsuranceQuote>()
     .name("sdk_workflow_example")
     .version(1)
     .ownerEmail("hello@example.com")
@@ -83,11 +83,11 @@ boolean registered = manager.registerWorkflow(workflowDef, false);
 boolean registered = manager.registerWorkflow(workflowDef, true);
 ```
 
-#### Create `ConductorWorkflow` based on the definition registered on the server
+#### Create `WorkflowWithInput` based on the definition registered on the server
 
 ```java
 WorkflowDef workflowDef = manager.getMetadataClient().getWorkflowDef("sdk_workflow_example", 1);
-ConductorWorkflow<GetInsuranceQuote> conductorWorkflow = ConductorWorkflow.fromWorkflowDef(workflowDef);
+WorkflowWithInput<GetInsuranceQuote> conductorWorkflow = WorkflowWithInput.fromWorkflowDef(workflowDef);
 ```
 
 #### Start Workflow Execution
@@ -121,8 +121,8 @@ Dynamic workflows are executed by specifying the workflow definition along with 
 2. Workflows are defined based on the user data and cannot be modeled ahead of time statically 
 
 ```java
-// 1. Use WorkflowBuilder to create ConductorWorkflow.
-ConductorWorkflow<GetInsuranceQuote> conductorWorkflow = new WorkflowBuilder<GetInsuranceQuote>()
+// 1. Use WorkflowBuilder to create WorkflowWithInput.
+WorkflowWithInput<GetInsuranceQuote> conductorWorkflow = new WorkflowBuilder<GetInsuranceQuote>()
     .name("sdk_workflow_example")
     .version(1)
     .ownerEmail("hello@example.com")

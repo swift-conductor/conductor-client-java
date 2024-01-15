@@ -36,7 +36,7 @@ import com.swiftconductor.conductor.common.metadata.tasks.TaskType;
 import com.swiftconductor.conductor.common.metadata.workflow.StartWorkflowRequest;
 import com.swiftconductor.conductor.common.metadata.workflow.WorkflowDef;
 import com.swiftconductor.conductor.common.run.Workflow;
-import com.swiftconductor.conductor.sdk.workflow.def.ConductorWorkflow;
+import com.swiftconductor.conductor.sdk.workflow.def.WorkflowWithInput;
 import com.swiftconductor.conductor.sdk.workflow.def.tasks.*;
 import com.swiftconductor.conductor.sdk.workflow.utils.ObjectMapperProvider;
 
@@ -147,7 +147,7 @@ public class WorkflowManager {
         return future;
     }
 
-    public CompletableFuture<Workflow> startWorkflow(ConductorWorkflow conductorWorkflow, Object input) {
+    public CompletableFuture<Workflow> startWorkflow(WorkflowWithInput conductorWorkflow, Object input) {
 
         CompletableFuture<Workflow> future = new CompletableFuture<>();
 

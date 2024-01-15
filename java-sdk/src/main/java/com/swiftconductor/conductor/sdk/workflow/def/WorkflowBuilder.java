@@ -142,11 +142,11 @@ public class WorkflowBuilder<T> {
         return this;
     }
 
-    public ConductorWorkflow<T> build() throws ValidationError {
+    public WorkflowWithInput<T> build() throws ValidationError {
 
         validate();
 
-        ConductorWorkflow<T> workflow = new ConductorWorkflow<T>();
+        WorkflowWithInput<T> workflow = new WorkflowWithInput<T>();
         if (description != null) {
             workflow.setDescription(description);
         }

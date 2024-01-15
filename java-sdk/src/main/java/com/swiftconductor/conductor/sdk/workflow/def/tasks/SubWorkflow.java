@@ -16,11 +16,11 @@ package com.swiftconductor.conductor.sdk.workflow.def.tasks;
 import com.swiftconductor.conductor.common.metadata.tasks.TaskType;
 import com.swiftconductor.conductor.common.metadata.workflow.SubWorkflowParams;
 import com.swiftconductor.conductor.common.metadata.workflow.WorkflowTask;
-import com.swiftconductor.conductor.sdk.workflow.def.ConductorWorkflow;
+import com.swiftconductor.conductor.sdk.workflow.def.WorkflowWithInput;
 
 public class SubWorkflow extends Task<SubWorkflow> {
 
-    private ConductorWorkflow conductorWorkflow;
+    private WorkflowWithInput conductorWorkflow;
 
     private String workflowName;
 
@@ -45,7 +45,7 @@ public class SubWorkflow extends Task<SubWorkflow> {
      * @param taskReferenceName
      * @param conductorWorkflow
      */
-    public SubWorkflow(String taskReferenceName, ConductorWorkflow conductorWorkflow) {
+    public SubWorkflow(String taskReferenceName, WorkflowWithInput conductorWorkflow) {
         super(taskReferenceName, TaskType.SUB_WORKFLOW);
         this.conductorWorkflow = conductorWorkflow;
     }
@@ -56,11 +56,11 @@ public class SubWorkflow extends Task<SubWorkflow> {
         this.workflowName = subworkflowParam.getName();
         this.workflowVersion = subworkflowParam.getVersion();
         if (subworkflowParam.getWorkflowDef() != null) {
-            this.conductorWorkflow = ConductorWorkflow.fromWorkflowDef(subworkflowParam.getWorkflowDef());
+            this.conductorWorkflow = WorkflowWithInput.fromWorkflowDef(subworkflowParam.getWorkflowDef());
         }
     }
 
-    public ConductorWorkflow getConductorWorkflow() {
+    public WorkflowWithInput getWorkflowWithInput() {
         return conductorWorkflow;
     }
 
