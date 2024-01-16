@@ -44,7 +44,8 @@ public class WorkflowTestFrameworkTests {
 
     @BeforeAll
     public static void init() throws IOException {
-        testRunner = new WorkflowTestRunner(8080, "3.16.0-SNAPSHOT");
+        // testRunner = new WorkflowTestRunner(8080, "3.16.0-SNAPSHOT");
+        testRunner = new WorkflowTestRunner(8080, "local");
         testRunner.init("com.swiftconductor.conductor.sdk.testing");
 
         manager = testRunner.getWorkflowManager();

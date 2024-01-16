@@ -60,7 +60,7 @@ class PayloadStorage implements ExternalPayloadStorage {
                 break;
             case TASK_INPUT:
             case TASK_OUTPUT:
-                uri = "tasks";
+                uri = "task";
                 break;
             default:
                 throw new ClientException(String.format("Invalid payload type: %s for operation: %s",

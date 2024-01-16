@@ -242,7 +242,7 @@ public class TaskClient extends ClientBase {
      */
     public void updateTask(TaskResult taskResult) {
         Validate.notNull(taskResult, "Task result cannot be null");
-        postForEntityWithRequestOnly("tasks", taskResult);
+        postForEntityWithRequestOnly("task", taskResult);
     }
 
     public Optional<String> evaluateAndUploadLargePayload(Map<String, Object> taskOutputData, String taskType) {
@@ -288,7 +288,7 @@ public class TaskClient extends ClientBase {
     public Boolean ack(String taskId, String workerId) {
         Validate.notBlank(taskId, "Task id cannot be blank");
 
-        String response = postForEntity("tasks/{taskId}/ack", null, new Object[] { "workerid", workerId }, String.class,
+        String response = postForEntity("task/{taskId}/ack", null, new Object[] { "workerid", workerId }, String.class,
                 taskId);
         return Boolean.valueOf(response);
     }
@@ -303,7 +303,7 @@ public class TaskClient extends ClientBase {
      */
     public void logMessageForTask(String taskId, String logMessage) {
         Validate.notBlank(taskId, "Task id cannot be blank");
-        postForEntityWithRequestOnly("tasks/" + taskId + "/log", logMessage);
+        postForEntityWithRequestOnly("task/" + taskId + "/log", logMessage);
     }
 
     /**
@@ -314,7 +314,7 @@ public class TaskClient extends ClientBase {
      */
     public List<TaskExecLog> getTaskLogs(String taskId) {
         Validate.notBlank(taskId, "Task id cannot be blank");
-        return getForEntity("tasks/{taskId}/log", null, taskExecLogList, taskId);
+        return getForEntity("task/{taskId}/log", null, taskExecLogList, taskId);
     }
 
     /**
@@ -326,7 +326,7 @@ public class TaskClient extends ClientBase {
      */
     public Task getTaskDetails(String taskId) {
         Validate.notBlank(taskId, "Task id cannot be blank");
-        return getForEntity("tasks/{taskId}", null, Task.class, taskId);
+        return getForEntity("task/{taskId}", null, Task.class, taskId);
     }
 
     /**
@@ -341,13 +341,13 @@ public class TaskClient extends ClientBase {
         Validate.notBlank(taskType, "Task type cannot be blank");
         Validate.notBlank(taskId, "Task id cannot be blank");
 
-        delete("tasks/queue/{taskType}/{taskId}", taskType, taskId);
+        delete("task/queue/{taskType}/{taskId}", taskType, taskId);
     }
 
     public int getQueueSizeForTask(String taskType) {
         Validate.notBlank(taskType, "Task type cannot be blank");
 
-        Integer queueSize = getForEntity("tasks/queue/size", new Object[] { "taskType", taskType },
+        Integer queueSize = getForEntity("task/queue/size", new Object[] { "taskType", taskType },
                 new GenericType<Integer>() {
                 });
         return queueSize != null ? queueSize : 0;
@@ -375,7 +375,7 @@ public class TaskClient extends ClientBase {
             params.add(executionNamespace);
         }
 
-        Integer queueSize = getForEntity("tasks/queue/size", params.toArray(new Object[0]), new GenericType<Integer>() {
+        Integer queueSize = getForEntity("task/queue/size", params.toArray(new Object[0]), new GenericType<Integer>() {
         });
         return queueSize != null ? queueSize : 0;
     }
@@ -409,7 +409,7 @@ public class TaskClient extends ClientBase {
      * @return returns the number of tasks that have been requeued
      */
     public String requeueAllPendingTasks() {
-        return postForEntity("tasks/queue/requeue", null, null, String.class);
+        return postForEntity("task/queue/requeue", null, null, String.class);
     }
 
     /**
@@ -419,7 +419,7 @@ public class TaskClient extends ClientBase {
      */
     public String requeuePendingTasksByTaskType(String taskType) {
         Validate.notBlank(taskType, "Task type cannot be blank");
-        return postForEntity("tasks/queue/requeue/{taskType}", null, null, String.class, taskType);
+        return postForEntity("task/queue/requeue/{taskType}", null, null, String.class, taskType);
     }
 
     /**
@@ -431,7 +431,7 @@ public class TaskClient extends ClientBase {
      *         matching the query
      */
     public SearchResult<TaskSummary> search(String query) {
-        return getForEntity("tasks/search", new Object[] { "query", query }, searchResultTaskSummary);
+        return getForEntity("task/search", new Object[] { "query", query }, searchResultTaskSummary);
     }
 
     /**
@@ -443,7 +443,7 @@ public class TaskClient extends ClientBase {
      *         the query
      */
     public SearchResult<Task> searchV2(String query) {
-        return getForEntity("tasks/search-v2", new Object[] { "query", query }, searchResultTask);
+        return getForEntity("task/search-v2", new Object[] { "query", query }, searchResultTask);
     }
 
     /**
@@ -465,7 +465,7 @@ public class TaskClient extends ClientBase {
     public SearchResult<TaskSummary> search(Integer start, Integer size, String sort, String freeText, String query) {
         Object[] params = new Object[] { "start", start, "size", size, "sort", sort, "freeText", freeText, "query",
                 query };
-        return getForEntity("tasks/search", params, searchResultTaskSummary);
+        return getForEntity("task/search", params, searchResultTaskSummary);
     }
 
     /**
@@ -487,6 +487,6 @@ public class TaskClient extends ClientBase {
     public SearchResult<Task> searchV2(Integer start, Integer size, String sort, String freeText, String query) {
         Object[] params = new Object[] { "start", start, "size", size, "sort", sort, "freeText", freeText, "query",
                 query };
-        return getForEntity("tasks/search-v2", params, searchResultTask);
+        return getForEntity("task/search-v2", params, searchResultTask);
     }
 }

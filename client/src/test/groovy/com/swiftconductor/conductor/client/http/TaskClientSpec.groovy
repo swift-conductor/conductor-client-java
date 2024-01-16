@@ -37,7 +37,7 @@ class TaskClientSpec extends ClientSpecification {
         result.totalHits = 1
         result.results = [new TaskSummary()]
 
-        URI uri = createURI("tasks/search?query=$query")
+        URI uri = createURI("task/search?query=$query")
 
         when:
         SearchResult<TaskSummary> searchResult = taskClient.search(query)
@@ -59,7 +59,7 @@ class TaskClientSpec extends ClientSpecification {
         result.totalHits = 1
         result.results = [new Task()]
 
-        URI uri = createURI("tasks/search-v2?query=$query")
+        URI uri = createURI("task/search-v2?query=$query")
 
         when:
         SearchResult<Task> searchResult = taskClient.searchV2('my_complex_query')
@@ -85,7 +85,7 @@ class TaskClientSpec extends ClientSpecification {
         result.totalHits = 1
         result.results = [new TaskSummary()]
 
-        URI uri = createURI("tasks/search?start=$start&size=$size&sort=$sort&freeText=$freeText&query=$query")
+        URI uri = createURI("task/search?start=$start&size=$size&sort=$sort&freeText=$freeText&query=$query")
 
         when:
         SearchResult<TaskSummary> searchResult = taskClient.search(start, size, sort, freeText, query)
@@ -111,7 +111,7 @@ class TaskClientSpec extends ClientSpecification {
         result.totalHits = 1
         result.results = [new Task()]
 
-        URI uri = createURI("tasks/search-v2?start=$start&size=$size&sort=$sort&freeText=$freeText&query=$query")
+        URI uri = createURI("task/search-v2?start=$start&size=$size&sort=$sort&freeText=$freeText&query=$query")
 
         when:
         SearchResult<Task> searchResult = taskClient.searchV2(start, size, sort, freeText, query)

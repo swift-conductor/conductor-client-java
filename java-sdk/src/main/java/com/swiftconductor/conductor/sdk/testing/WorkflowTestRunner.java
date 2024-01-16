@@ -36,13 +36,17 @@ public class WorkflowTestRunner {
 
     public WorkflowTestRunner(int port, String conductorVersion) {
 
-        localServerRunner = new LocalServerRunner(port, conductorVersion);
+        String serverAPIUrl = "http://localhost:" + port + "/api/";
+        if (!conductorVersion.equals("local")) {
+            localServerRunner = new LocalServerRunner(port, conductorVersion);
+            serverAPIUrl = localServerRunner.getServerAPIUrl();
+        }
 
         TaskClient taskClient = new TaskClient();
-        taskClient.setRootURI(localServerRunner.getServerAPIUrl());
+        taskClient.setRootURI(serverAPIUrl);
         this.annotatedWorkerHost = new AnnotatedWorkerHost(taskClient);
 
-        this.workflowManager = new WorkflowManager(localServerRunner.getServerAPIUrl());
+        this.workflowManager = new WorkflowManager(serverAPIUrl);
     }
 
     public WorkflowManager getWorkflowManager() {
@@ -57,7 +61,9 @@ public class WorkflowTestRunner {
     }
 
     public void shutdown() {
-        localServerRunner.shutdown();
+        if (localServerRunner != null) {
+            localServerRunner.shutdown();
+        }
         annotatedWorkerHost.shutdown();
         workflowManager.shutdown();
     }
