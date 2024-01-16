@@ -100,12 +100,12 @@ public class MetadataClient extends ClientBase {
      */
     public void registerWorkflowDef(WorkflowDef workflowDef) {
         Validate.notNull(workflowDef, "Workflow definition cannot be null");
-        postForEntityWithRequestOnly("metadata/workflow", workflowDef);
+        postForEntityWithRequestOnly("metadata/workflowdef", workflowDef);
     }
 
     public void validateWorkflowDef(WorkflowDef workflowDef) {
         Validate.notNull(workflowDef, "Workflow definition cannot be null");
-        postForEntityWithRequestOnly("metadata/workflow/validate", workflowDef);
+        postForEntityWithRequestOnly("metadata/workflowdef/validate", workflowDef);
     }
 
     /**
@@ -116,7 +116,7 @@ public class MetadataClient extends ClientBase {
      */
     public void updateWorkflowDefs(List<WorkflowDef> workflowDefs) {
         Validate.notNull(workflowDefs, "Workflow defs list cannot be null");
-        put("metadata/workflow", null, workflowDefs);
+        put("metadata/workflowdef", null, workflowDefs);
     }
 
     /**
@@ -130,12 +130,12 @@ public class MetadataClient extends ClientBase {
      */
     public WorkflowDef getWorkflowDef(String name, Integer version) {
         Validate.notBlank(name, "name cannot be blank");
-        return getForEntity("metadata/workflow/{name}", new Object[] { "version", version }, WorkflowDef.class, name);
+        return getForEntity("metadata/workflowdef/{name}", new Object[] { "version", version }, WorkflowDef.class, name);
     }
 
     /** */
     public List<WorkflowDef> getAllWorkflowsWithLatestVersions() {
-        return getForEntity("metadata/workflow/latest-versions", null, workflowDefList, (Object) null);
+        return getForEntity("metadata/workflowdef/latest-versions", null, workflowDefList, (Object) null);
     }
 
     /**
@@ -150,7 +150,7 @@ public class MetadataClient extends ClientBase {
     public void unregisterWorkflowDef(String name, Integer version) {
         Validate.notBlank(name, "Workflow name cannot be blank");
         Validate.notNull(version, "Version cannot be null");
-        delete("metadata/workflow/{name}/{version}", name, version);
+        delete("metadata/workflowdef/{name}/{version}", name, version);
     }
 
     // Task Metadata Operations
@@ -163,7 +163,7 @@ public class MetadataClient extends ClientBase {
      */
     public void registerTaskDefs(List<TaskDef> taskDefs) {
         Validate.notNull(taskDefs, "Task defs list cannot be null");
-        postForEntityWithRequestOnly("metadata/taskdefs", taskDefs);
+        postForEntityWithRequestOnly("metadata/taskdef", taskDefs);
     }
 
     /**
@@ -174,7 +174,7 @@ public class MetadataClient extends ClientBase {
      */
     public void updateTaskDef(TaskDef taskDef) {
         Validate.notNull(taskDef, "Task definition cannot be null");
-        put("metadata/taskdefs", null, taskDef);
+        put("metadata/taskdef", null, taskDef);
     }
 
     /**
@@ -186,7 +186,7 @@ public class MetadataClient extends ClientBase {
      */
     public TaskDef getTaskDef(String taskType) {
         Validate.notBlank(taskType, "Task type cannot be blank");
-        return getForEntity("metadata/taskdefs/{tasktype}", null, TaskDef.class, taskType);
+        return getForEntity("metadata/taskdef/{tasktype}", null, TaskDef.class, taskType);
     }
 
     /**
@@ -198,6 +198,6 @@ public class MetadataClient extends ClientBase {
      */
     public void unregisterTaskDef(String taskType) {
         Validate.notBlank(taskType, "Task type cannot be blank");
-        delete("metadata/taskdefs/{tasktype}", taskType);
+        delete("metadata/taskdef/{tasktype}", taskType);
     }
 }

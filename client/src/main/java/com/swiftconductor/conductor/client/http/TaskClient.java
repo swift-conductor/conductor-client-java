@@ -144,7 +144,7 @@ public class TaskClient extends ClientBase {
         Validate.notBlank(workerId, "Worker id cannot be blank");
 
         Object[] params = new Object[] { "workerid", workerId, "domain", domain };
-        Task task = ObjectUtils.defaultIfNull(getForEntity("tasks/poll/{taskType}", params, Task.class, taskType),
+        Task task = ObjectUtils.defaultIfNull(getForEntity("task/poll/{taskType}", params, Task.class, taskType),
                 new Task());
         populateTaskPayloads(task);
         return task;
@@ -171,7 +171,7 @@ public class TaskClient extends ClientBase {
         Validate.isTrue(count > 0, "Count must be greater than 0");
 
         Object[] params = new Object[] { "workerid", workerId, "count", count, "timeout", timeoutInMillisecond };
-        List<Task> tasks = getForEntity("tasks/poll/batch/{taskType}", params, taskList, taskType);
+        List<Task> tasks = getForEntity("task/poll/batch/{taskType}", params, taskList, taskType);
         tasks.forEach(this::populateTaskPayloads);
         return tasks;
     }
@@ -201,7 +201,7 @@ public class TaskClient extends ClientBase {
         Object[] params = new Object[] { "workerid", workerId, "count", count, "timeout", timeoutInMillisecond,
                 "domain",
                 domain };
-        List<Task> tasks = getForEntity("tasks/poll/batch/{taskType}", params, taskList, taskType);
+        List<Task> tasks = getForEntity("task/poll/batch/{taskType}", params, taskList, taskType);
         tasks.forEach(this::populateTaskPayloads);
         return tasks;
     }
@@ -391,7 +391,7 @@ public class TaskClient extends ClientBase {
         Validate.notBlank(taskType, "Task type cannot be blank");
 
         Object[] params = new Object[] { "taskType", taskType };
-        return getForEntity("tasks/queue/polldata", params, pollDataList);
+        return getForEntity("task/queue/poll-data", params, pollDataList);
     }
 
     /**
@@ -400,7 +400,7 @@ public class TaskClient extends ClientBase {
      * @return returns a list of poll data for all task types
      */
     public List<PollData> getAllPollData() {
-        return getForEntity("tasks/queue/polldata/all", null, pollDataList);
+        return getForEntity("task/queue/poll-data/all", null, pollDataList);
     }
 
     /**

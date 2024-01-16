@@ -33,7 +33,7 @@ class MetadataClientSpec extends ClientSpecification {
         given:
         String workflowName = 'test'
         int version = 1
-        URI uri = createURI("metadata/workflow/$workflowName/$version")
+        URI uri = createURI("metadata/workflowdef/$workflowName/$version")
 
         when:
         metadataClient.unregisterWorkflowDef(workflowName, version)
@@ -46,7 +46,7 @@ class MetadataClientSpec extends ClientSpecification {
         given:
         String workflowName = 'test'
         int version = 1
-        URI uri = createURI("metadata/workflow/$workflowName/$version")
+        URI uri = createURI("metadata/workflowdef/$workflowName/$version")
 
         when:
         metadataClient.unregisterWorkflowDef(workflowName, version)
@@ -82,7 +82,7 @@ class MetadataClientSpec extends ClientSpecification {
     def "workflow get all definitions latest version"() {
         given:
         List<WorkflowDef> result = new ArrayList<WorkflowDef>()
-        URI uri = createURI("metadata/workflow/latest-versions")
+        URI uri = createURI("metadata/workflowdef/latest-versions")
 
         when:
         metadataClient.getAllWorkflowsWithLatestVersions()

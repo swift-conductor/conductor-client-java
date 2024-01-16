@@ -354,7 +354,7 @@ public class WorkflowClient extends ClientBase {
         Validate.notBlank(workflowId, "workflow id cannot be blank");
         Validate.notBlank(taskReferenceName, "Task reference name cannot be blank");
 
-        put("workflow/{workflowId}/skiptask/{taskReferenceName}", null, null, workflowId, taskReferenceName);
+        put("workflow/{workflowId}/skip-task/{taskReferenceName}", null, null, workflowId, taskReferenceName);
     }
 
     /**
