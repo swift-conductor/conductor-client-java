@@ -16,7 +16,7 @@
  * Common place to define all the version dependencies
  */
 ext {
-    revConductor = '3.16.0-SNAPSHOT'
+    revConductor = '3.16.0'
     revActivation = '2.0.0'
     revAwaitility = '3.1.6'
     revAwsSdk = '1.12.535'
