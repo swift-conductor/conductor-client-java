@@ -51,7 +51,7 @@
             "project": true
         },
         "com.swiftconductor.conductor:conductor-common": {
-            "locked": "3.16.0-SNAPSHOT"
+            "locked": "3.16.0"
         },
         "javax.ws.rs:javax.ws.rs-api": {
             "locked": "2.1.1"
@@ -185,7 +185,7 @@
             "firstLevelTransitive": [
                 "com.swiftconductor.conductor:conductor-client"
             ],
-            "locked": "3.16.0-SNAPSHOT"
+            "locked": "3.16.0"
         },
         "commons-io:commons-io": {
             "firstLevelTransitive": [
@@ -392,7 +392,7 @@
             "project": true
         },
         "com.swiftconductor.conductor:conductor-common": {
-            "locked": "3.16.0-SNAPSHOT"
+            "locked": "3.16.0"
         },
         "javax.ws.rs:javax.ws.rs-api": {
             "locked": "2.1.1"
@@ -553,7 +553,7 @@
             "firstLevelTransitive": [
                 "com.swiftconductor.conductor:conductor-client"
             ],
-            "locked": "3.16.0-SNAPSHOT"
+            "locked": "3.16.0"
         },
         "commons-io:commons-io": {
             "firstLevelTransitive": [

@@ -45,10 +45,10 @@
             "locked": "3.24.3"
         },
         "com.swiftconductor.conductor:conductor-common": {
-            "locked": "3.16.0-SNAPSHOT"
+            "locked": "3.16.0"
         },
         "com.swiftconductor.conductor:conductor-grpc": {
-            "locked": "3.16.0-SNAPSHOT"
+            "locked": "3.16.0"
         },
         "io.grpc:grpc-netty": {
             "locked": "1.60.1"
@@ -125,10 +125,10 @@
             "locked": "3.24.3"
         },
         "com.swiftconductor.conductor:conductor-common": {
-            "locked": "3.16.0-SNAPSHOT"
+            "locked": "3.16.0"
         },
         "com.swiftconductor.conductor:conductor-grpc": {
-            "locked": "3.16.0-SNAPSHOT"
+            "locked": "3.16.0"
         },
         "io.grpc:grpc-netty": {
             "locked": "1.60.1"
@@ -293,10 +293,10 @@
             "locked": "3.24.3"
         },
         "com.swiftconductor.conductor:conductor-common": {
-            "locked": "3.16.0-SNAPSHOT"
+            "locked": "3.16.0"
         },
         "com.swiftconductor.conductor:conductor-grpc": {
-            "locked": "3.16.0-SNAPSHOT"
+            "locked": "3.16.0"
         },
         "io.grpc:grpc-netty": {
             "locked": "1.60.1"
@@ -388,10 +388,10 @@
             "locked": "3.24.3"
         },
         "com.swiftconductor.conductor:conductor-common": {
-            "locked": "3.16.0-SNAPSHOT"
+            "locked": "3.16.0"
         },
         "com.swiftconductor.conductor:conductor-grpc": {
-            "locked": "3.16.0-SNAPSHOT"
+            "locked": "3.16.0"
         },
         "io.grpc:grpc-netty": {
             "locked": "1.60.1"

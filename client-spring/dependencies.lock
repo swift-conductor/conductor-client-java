@@ -45,7 +45,7 @@
             "project": true
         },
         "com.swiftconductor.conductor:conductor-common": {
-            "locked": "3.16.0-SNAPSHOT"
+            "locked": "3.16.0"
         },
         "com.swiftconductor.conductor:conductor-java-sdk": {
             "project": true
@@ -198,7 +198,7 @@
                 "com.swiftconductor.conductor:conductor-client",
                 "com.swiftconductor.conductor:conductor-java-sdk"
             ],
-            "locked": "3.16.0-SNAPSHOT"
+            "locked": "3.16.0"
         },
         "com.swiftconductor.conductor:conductor-java-sdk": {
             "project": true
@@ -416,7 +416,7 @@
             "project": true
         },
         "com.swiftconductor.conductor:conductor-common": {
-            "locked": "3.16.0-SNAPSHOT"
+            "locked": "3.16.0"
         },
         "com.swiftconductor.conductor:conductor-java-sdk": {
             "project": true
@@ -584,7 +584,7 @@
                 "com.swiftconductor.conductor:conductor-client",
                 "com.swiftconductor.conductor:conductor-java-sdk"
             ],
-            "locked": "3.16.0-SNAPSHOT"
+            "locked": "3.16.0"
         },
         "com.swiftconductor.conductor:conductor-java-sdk": {
             "project": true

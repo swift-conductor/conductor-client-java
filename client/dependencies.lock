@@ -51,7 +51,7 @@
             "locked": "1.19.4"
         },
         "com.swiftconductor.conductor:conductor-common": {
-            "locked": "3.16.0-SNAPSHOT"
+            "locked": "3.16.0"
         },
         "commons-io:commons-io": {
             "locked": "2.7"
@@ -137,7 +137,7 @@
             "locked": "1.19.4"
         },
         "com.swiftconductor.conductor:conductor-common": {
-            "locked": "3.16.0-SNAPSHOT"
+            "locked": "3.16.0"
         },
         "commons-io:commons-io": {
             "locked": "2.7"
@@ -308,7 +308,7 @@
             "locked": "1.19.4"
         },
         "com.swiftconductor.conductor:conductor-common": {
-            "locked": "3.16.0-SNAPSHOT"
+            "locked": "3.16.0"
         },
         "commons-io:commons-io": {
             "locked": "2.7"
@@ -421,7 +421,7 @@
             "locked": "1.19.4"
         },
         "com.swiftconductor.conductor:conductor-common": {
-            "locked": "3.16.0-SNAPSHOT"
+            "locked": "3.16.0"
         },
         "commons-io:commons-io": {
             "locked": "2.7"
